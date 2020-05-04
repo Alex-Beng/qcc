@@ -1,0 +1,1 @@
+g++ main.cpp generated/*.cpp -I/usr/local/include/antlr4-runtime -std=c++11 -I../generated -L/usr/local/lib/ -lantlr4-runtime
