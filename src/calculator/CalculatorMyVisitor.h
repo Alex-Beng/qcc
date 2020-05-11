@@ -17,7 +17,6 @@ private:
     std::map<std::string, double> variables;
 public:
     Any visitPlus(CalculatorParser::PlusContext *ctx) {
-        
         return (double)visit(ctx->plusOrMinus()) + (double)visit(ctx->multOrDiv());
     }
     Any visitMinus(CalculatorParser::PlusContext *ctx) {
@@ -36,7 +35,7 @@ public:
     }
     Any visitPower(CalculatorParser::PowerContext *ctx) {
         if (ctx->pow() != NULL) {
-            pow((double)visit(ctx->unaryMinus()), (double)visit(ctx->pow()));
+            return pow((double)visit(ctx->unaryMinus()), (double)visit(ctx->pow()));
         }
         return visit(ctx->unaryMinus());
     }
