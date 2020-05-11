@@ -4,7 +4,9 @@ DOUBLE : [0-9]+'.'[0-9]+;
 PI     : 'pi';
 E      : 'e';
 POW    : '^';
+// new line
 NL     : '\n';
+// white space
 WS     : [ \t\r]+ -> skip;
 ID     : [a-zA-Z_][a-zA-Z_0-9]*;
 

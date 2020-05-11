@@ -1,2 +1,7 @@
 .antlr
 *.jar
+*.tokens
+*.out
+*.interp
+*.o
+.vscode
