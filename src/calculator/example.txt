@@ -1,4 +1,4 @@
-a = 1+2
-b = pi
-c = e
-c+b
+a = 3
+b = a*a
+c = a + a^b
+c

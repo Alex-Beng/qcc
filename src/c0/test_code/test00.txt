@@ -1,0 +1,9 @@
+int c;
+int d[9];
+int func(int abb) {
+     int a;
+}
+
+void main() {
+
+}
