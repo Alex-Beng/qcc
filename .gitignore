@@ -6,3 +6,5 @@
 *.o
 .vscode
 antlr4-runtime
+*.log
+MiniC.g4

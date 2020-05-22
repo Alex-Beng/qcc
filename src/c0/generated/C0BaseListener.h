@@ -19,17 +19,17 @@ public:
   virtual void enterProgram(C0Parser::ProgramContext * /*ctx*/) override { }
   virtual void exitProgram(C0Parser::ProgramContext * /*ctx*/) override { }
 
-  virtual void enterDecl(C0Parser::DeclContext * /*ctx*/) override { }
-  virtual void exitDecl(C0Parser::DeclContext * /*ctx*/) override { }
+  virtual void enterDeclaration(C0Parser::DeclarationContext * /*ctx*/) override { }
+  virtual void exitDeclaration(C0Parser::DeclarationContext * /*ctx*/) override { }
 
-  virtual void enterVar_decl(C0Parser::Var_declContext * /*ctx*/) override { }
-  virtual void exitVar_decl(C0Parser::Var_declContext * /*ctx*/) override { }
+  virtual void enterVar_declaration(C0Parser::Var_declarationContext * /*ctx*/) override { }
+  virtual void exitVar_declaration(C0Parser::Var_declarationContext * /*ctx*/) override { }
 
-  virtual void enterType_spec(C0Parser::Type_specContext * /*ctx*/) override { }
-  virtual void exitType_spec(C0Parser::Type_specContext * /*ctx*/) override { }
+  virtual void enterTypeID(C0Parser::TypeIDContext * /*ctx*/) override { }
+  virtual void exitTypeID(C0Parser::TypeIDContext * /*ctx*/) override { }
 
-  virtual void enterFun_decl(C0Parser::Fun_declContext * /*ctx*/) override { }
-  virtual void exitFun_decl(C0Parser::Fun_declContext * /*ctx*/) override { }
+  virtual void enterFun_declaration(C0Parser::Fun_declarationContext * /*ctx*/) override { }
+  virtual void exitFun_declaration(C0Parser::Fun_declarationContext * /*ctx*/) override { }
 
   virtual void enterParams(C0Parser::ParamsContext * /*ctx*/) override { }
   virtual void exitParams(C0Parser::ParamsContext * /*ctx*/) override { }
@@ -37,35 +37,44 @@ public:
   virtual void enterParam(C0Parser::ParamContext * /*ctx*/) override { }
   virtual void exitParam(C0Parser::ParamContext * /*ctx*/) override { }
 
-  virtual void enterStmt(C0Parser::StmtContext * /*ctx*/) override { }
-  virtual void exitStmt(C0Parser::StmtContext * /*ctx*/) override { }
+  virtual void enterStatement(C0Parser::StatementContext * /*ctx*/) override { }
+  virtual void exitStatement(C0Parser::StatementContext * /*ctx*/) override { }
 
-  virtual void enterExpr_stmt(C0Parser::Expr_stmtContext * /*ctx*/) override { }
-  virtual void exitExpr_stmt(C0Parser::Expr_stmtContext * /*ctx*/) override { }
+  virtual void enterExpression_statement(C0Parser::Expression_statementContext * /*ctx*/) override { }
+  virtual void exitExpression_statement(C0Parser::Expression_statementContext * /*ctx*/) override { }
 
-  virtual void enterWhile_stmt(C0Parser::While_stmtContext * /*ctx*/) override { }
-  virtual void exitWhile_stmt(C0Parser::While_stmtContext * /*ctx*/) override { }
+  virtual void enterScanf_statement(C0Parser::Scanf_statementContext * /*ctx*/) override { }
+  virtual void exitScanf_statement(C0Parser::Scanf_statementContext * /*ctx*/) override { }
 
-  virtual void enterCompound_stmt(C0Parser::Compound_stmtContext * /*ctx*/) override { }
-  virtual void exitCompound_stmt(C0Parser::Compound_stmtContext * /*ctx*/) override { }
+  virtual void enterPrintf_statement(C0Parser::Printf_statementContext * /*ctx*/) override { }
+  virtual void exitPrintf_statement(C0Parser::Printf_statementContext * /*ctx*/) override { }
 
-  virtual void enterLocal_decl(C0Parser::Local_declContext * /*ctx*/) override { }
-  virtual void exitLocal_decl(C0Parser::Local_declContext * /*ctx*/) override { }
+  virtual void enterCompound_statement(C0Parser::Compound_statementContext * /*ctx*/) override { }
+  virtual void exitCompound_statement(C0Parser::Compound_statementContext * /*ctx*/) override { }
 
-  virtual void enterIf_stmt(C0Parser::If_stmtContext * /*ctx*/) override { }
-  virtual void exitIf_stmt(C0Parser::If_stmtContext * /*ctx*/) override { }
+  virtual void enterLocal_declaration(C0Parser::Local_declarationContext * /*ctx*/) override { }
+  virtual void exitLocal_declaration(C0Parser::Local_declarationContext * /*ctx*/) override { }
 
-  virtual void enterReturn_stmt(C0Parser::Return_stmtContext * /*ctx*/) override { }
-  virtual void exitReturn_stmt(C0Parser::Return_stmtContext * /*ctx*/) override { }
+  virtual void enterIf_statement(C0Parser::If_statementContext * /*ctx*/) override { }
+  virtual void exitIf_statement(C0Parser::If_statementContext * /*ctx*/) override { }
 
-  virtual void enterBreak_stmt(C0Parser::Break_stmtContext * /*ctx*/) override { }
-  virtual void exitBreak_stmt(C0Parser::Break_stmtContext * /*ctx*/) override { }
+  virtual void enterWhile_statement(C0Parser::While_statementContext * /*ctx*/) override { }
+  virtual void exitWhile_statement(C0Parser::While_statementContext * /*ctx*/) override { }
 
-  virtual void enterContinue_stmt(C0Parser::Continue_stmtContext * /*ctx*/) override { }
-  virtual void exitContinue_stmt(C0Parser::Continue_stmtContext * /*ctx*/) override { }
+  virtual void enterFor_statement(C0Parser::For_statementContext * /*ctx*/) override { }
+  virtual void exitFor_statement(C0Parser::For_statementContext * /*ctx*/) override { }
 
-  virtual void enterExpr(C0Parser::ExprContext * /*ctx*/) override { }
-  virtual void exitExpr(C0Parser::ExprContext * /*ctx*/) override { }
+  virtual void enterReturn_statement(C0Parser::Return_statementContext * /*ctx*/) override { }
+  virtual void exitReturn_statement(C0Parser::Return_statementContext * /*ctx*/) override { }
+
+  virtual void enterBreak_statement(C0Parser::Break_statementContext * /*ctx*/) override { }
+  virtual void exitBreak_statement(C0Parser::Break_statementContext * /*ctx*/) override { }
+
+  virtual void enterContinue_statement(C0Parser::Continue_statementContext * /*ctx*/) override { }
+  virtual void exitContinue_statement(C0Parser::Continue_statementContext * /*ctx*/) override { }
+
+  virtual void enterExpression(C0Parser::ExpressionContext * /*ctx*/) override { }
+  virtual void exitExpression(C0Parser::ExpressionContext * /*ctx*/) override { }
 
   virtual void enterArgs(C0Parser::ArgsContext * /*ctx*/) override { }
   virtual void exitArgs(C0Parser::ArgsContext * /*ctx*/) override { }

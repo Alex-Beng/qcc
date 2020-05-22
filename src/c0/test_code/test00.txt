@@ -1,9 +1,29 @@
-int c;
-int d[9];
-int func(int abb) {
-     int a;
+const int a = 0;
+const char b = 'c';
+int i = 45;
+
+int func() {
+     const int a = 0;
+     const char b = 'c';
+     int i = 45;
+     
 }
 
-void main() {
-
+void main(void) {
+     int b;
+     while (true) {
+          const int a = 1;
+          int b = -a;
+     }
+     for (int i=0; i<10; ++i) {
+          if (i == 1) 
+               break;
+          printf(" ");
+          printf("%d" i);
+          printf(i);
+          printf(i, i);
+          printf("%d" i+i);
+          scanf(b);
+          scanf(b, b);
+     }
 }
