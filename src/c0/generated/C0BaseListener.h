@@ -16,68 +16,101 @@
 class  C0BaseListener : public C0Listener {
 public:
 
-  virtual void enterProgram(C0Parser::ProgramContext * /*ctx*/) override { }
-  virtual void exitProgram(C0Parser::ProgramContext * /*ctx*/) override { }
+  virtual void enterCompilationUnit(C0Parser::CompilationUnitContext * /*ctx*/) override { }
+  virtual void exitCompilationUnit(C0Parser::CompilationUnitContext * /*ctx*/) override { }
 
-  virtual void enterDeclaration(C0Parser::DeclarationContext * /*ctx*/) override { }
-  virtual void exitDeclaration(C0Parser::DeclarationContext * /*ctx*/) override { }
+  virtual void enterFunctionDefinition(C0Parser::FunctionDefinitionContext * /*ctx*/) override { }
+  virtual void exitFunctionDefinition(C0Parser::FunctionDefinitionContext * /*ctx*/) override { }
 
-  virtual void enterVar_declaration(C0Parser::Var_declarationContext * /*ctx*/) override { }
-  virtual void exitVar_declaration(C0Parser::Var_declarationContext * /*ctx*/) override { }
+  virtual void enterVariableDefinition(C0Parser::VariableDefinitionContext * /*ctx*/) override { }
+  virtual void exitVariableDefinition(C0Parser::VariableDefinitionContext * /*ctx*/) override { }
 
-  virtual void enterTypeID(C0Parser::TypeIDContext * /*ctx*/) override { }
-  virtual void exitTypeID(C0Parser::TypeIDContext * /*ctx*/) override { }
+  virtual void enterParameter(C0Parser::ParameterContext * /*ctx*/) override { }
+  virtual void exitParameter(C0Parser::ParameterContext * /*ctx*/) override { }
 
-  virtual void enterFun_declaration(C0Parser::Fun_declarationContext * /*ctx*/) override { }
-  virtual void exitFun_declaration(C0Parser::Fun_declarationContext * /*ctx*/) override { }
+  virtual void enterTypeType(C0Parser::TypeTypeContext * /*ctx*/) override { }
+  virtual void exitTypeType(C0Parser::TypeTypeContext * /*ctx*/) override { }
 
-  virtual void enterParams(C0Parser::ParamsContext * /*ctx*/) override { }
-  virtual void exitParams(C0Parser::ParamsContext * /*ctx*/) override { }
+  virtual void enterBlock(C0Parser::BlockContext * /*ctx*/) override { }
+  virtual void exitBlock(C0Parser::BlockContext * /*ctx*/) override { }
 
-  virtual void enterParam(C0Parser::ParamContext * /*ctx*/) override { }
-  virtual void exitParam(C0Parser::ParamContext * /*ctx*/) override { }
+  virtual void enterBlockStmt(C0Parser::BlockStmtContext * /*ctx*/) override { }
+  virtual void exitBlockStmt(C0Parser::BlockStmtContext * /*ctx*/) override { }
 
-  virtual void enterStatement(C0Parser::StatementContext * /*ctx*/) override { }
-  virtual void exitStatement(C0Parser::StatementContext * /*ctx*/) override { }
+  virtual void enterVarDefStmt(C0Parser::VarDefStmtContext * /*ctx*/) override { }
+  virtual void exitVarDefStmt(C0Parser::VarDefStmtContext * /*ctx*/) override { }
 
-  virtual void enterExpression_statement(C0Parser::Expression_statementContext * /*ctx*/) override { }
-  virtual void exitExpression_statement(C0Parser::Expression_statementContext * /*ctx*/) override { }
+  virtual void enterIfStmt(C0Parser::IfStmtContext * /*ctx*/) override { }
+  virtual void exitIfStmt(C0Parser::IfStmtContext * /*ctx*/) override { }
 
-  virtual void enterScanf_statement(C0Parser::Scanf_statementContext * /*ctx*/) override { }
-  virtual void exitScanf_statement(C0Parser::Scanf_statementContext * /*ctx*/) override { }
+  virtual void enterForStmt(C0Parser::ForStmtContext * /*ctx*/) override { }
+  virtual void exitForStmt(C0Parser::ForStmtContext * /*ctx*/) override { }
 
-  virtual void enterPrintf_statement(C0Parser::Printf_statementContext * /*ctx*/) override { }
-  virtual void exitPrintf_statement(C0Parser::Printf_statementContext * /*ctx*/) override { }
+  virtual void enterWhileStmt(C0Parser::WhileStmtContext * /*ctx*/) override { }
+  virtual void exitWhileStmt(C0Parser::WhileStmtContext * /*ctx*/) override { }
 
-  virtual void enterCompound_statement(C0Parser::Compound_statementContext * /*ctx*/) override { }
-  virtual void exitCompound_statement(C0Parser::Compound_statementContext * /*ctx*/) override { }
+  virtual void enterReturnStmt(C0Parser::ReturnStmtContext * /*ctx*/) override { }
+  virtual void exitReturnStmt(C0Parser::ReturnStmtContext * /*ctx*/) override { }
 
-  virtual void enterLocal_declaration(C0Parser::Local_declarationContext * /*ctx*/) override { }
-  virtual void exitLocal_declaration(C0Parser::Local_declarationContext * /*ctx*/) override { }
+  virtual void enterBreakStmt(C0Parser::BreakStmtContext * /*ctx*/) override { }
+  virtual void exitBreakStmt(C0Parser::BreakStmtContext * /*ctx*/) override { }
 
-  virtual void enterIf_statement(C0Parser::If_statementContext * /*ctx*/) override { }
-  virtual void exitIf_statement(C0Parser::If_statementContext * /*ctx*/) override { }
+  virtual void enterContinueStmt(C0Parser::ContinueStmtContext * /*ctx*/) override { }
+  virtual void exitContinueStmt(C0Parser::ContinueStmtContext * /*ctx*/) override { }
 
-  virtual void enterWhile_statement(C0Parser::While_statementContext * /*ctx*/) override { }
-  virtual void exitWhile_statement(C0Parser::While_statementContext * /*ctx*/) override { }
+  virtual void enterExprStmt(C0Parser::ExprStmtContext * /*ctx*/) override { }
+  virtual void exitExprStmt(C0Parser::ExprStmtContext * /*ctx*/) override { }
 
-  virtual void enterFor_statement(C0Parser::For_statementContext * /*ctx*/) override { }
-  virtual void exitFor_statement(C0Parser::For_statementContext * /*ctx*/) override { }
+  virtual void enterBlankStmt(C0Parser::BlankStmtContext * /*ctx*/) override { }
+  virtual void exitBlankStmt(C0Parser::BlankStmtContext * /*ctx*/) override { }
 
-  virtual void enterReturn_statement(C0Parser::Return_statementContext * /*ctx*/) override { }
-  virtual void exitReturn_statement(C0Parser::Return_statementContext * /*ctx*/) override { }
+  virtual void enterExpressionList(C0Parser::ExpressionListContext * /*ctx*/) override { }
+  virtual void exitExpressionList(C0Parser::ExpressionListContext * /*ctx*/) override { }
 
-  virtual void enterBreak_statement(C0Parser::Break_statementContext * /*ctx*/) override { }
-  virtual void exitBreak_statement(C0Parser::Break_statementContext * /*ctx*/) override { }
+  virtual void enterLogicalOrExpr(C0Parser::LogicalOrExprContext * /*ctx*/) override { }
+  virtual void exitLogicalOrExpr(C0Parser::LogicalOrExprContext * /*ctx*/) override { }
 
-  virtual void enterContinue_statement(C0Parser::Continue_statementContext * /*ctx*/) override { }
-  virtual void exitContinue_statement(C0Parser::Continue_statementContext * /*ctx*/) override { }
+  virtual void enterPrefixExpr(C0Parser::PrefixExprContext * /*ctx*/) override { }
+  virtual void exitPrefixExpr(C0Parser::PrefixExprContext * /*ctx*/) override { }
 
-  virtual void enterExpression(C0Parser::ExpressionContext * /*ctx*/) override { }
-  virtual void exitExpression(C0Parser::ExpressionContext * /*ctx*/) override { }
+  virtual void enterPrimaryExpr(C0Parser::PrimaryExprContext * /*ctx*/) override { }
+  virtual void exitPrimaryExpr(C0Parser::PrimaryExprContext * /*ctx*/) override { }
 
-  virtual void enterArgs(C0Parser::ArgsContext * /*ctx*/) override { }
-  virtual void exitArgs(C0Parser::ArgsContext * /*ctx*/) override { }
+  virtual void enterLogicalAndExpr(C0Parser::LogicalAndExprContext * /*ctx*/) override { }
+  virtual void exitLogicalAndExpr(C0Parser::LogicalAndExprContext * /*ctx*/) override { }
+
+  virtual void enterFuncallExpr(C0Parser::FuncallExprContext * /*ctx*/) override { }
+  virtual void exitFuncallExpr(C0Parser::FuncallExprContext * /*ctx*/) override { }
+
+  virtual void enterArefExpr(C0Parser::ArefExprContext * /*ctx*/) override { }
+  virtual void exitArefExpr(C0Parser::ArefExprContext * /*ctx*/) override { }
+
+  virtual void enterSuffixExpr(C0Parser::SuffixExprContext * /*ctx*/) override { }
+  virtual void exitSuffixExpr(C0Parser::SuffixExprContext * /*ctx*/) override { }
+
+  virtual void enterBinaryExpr(C0Parser::BinaryExprContext * /*ctx*/) override { }
+  virtual void exitBinaryExpr(C0Parser::BinaryExprContext * /*ctx*/) override { }
+
+  virtual void enterAssignExpr(C0Parser::AssignExprContext * /*ctx*/) override { }
+  virtual void exitAssignExpr(C0Parser::AssignExprContext * /*ctx*/) override { }
+
+  virtual void enterSubExpr(C0Parser::SubExprContext * /*ctx*/) override { }
+  virtual void exitSubExpr(C0Parser::SubExprContext * /*ctx*/) override { }
+
+  virtual void enterVariableExpr(C0Parser::VariableExprContext * /*ctx*/) override { }
+  virtual void exitVariableExpr(C0Parser::VariableExprContext * /*ctx*/) override { }
+
+  virtual void enterLiteralExpr(C0Parser::LiteralExprContext * /*ctx*/) override { }
+  virtual void exitLiteralExpr(C0Parser::LiteralExprContext * /*ctx*/) override { }
+
+  virtual void enterDecIntegerConst(C0Parser::DecIntegerConstContext * /*ctx*/) override { }
+  virtual void exitDecIntegerConst(C0Parser::DecIntegerConstContext * /*ctx*/) override { }
+
+  virtual void enterCharConst(C0Parser::CharConstContext * /*ctx*/) override { }
+  virtual void exitCharConst(C0Parser::CharConstContext * /*ctx*/) override { }
+
+  virtual void enterStringConst(C0Parser::StringConstContext * /*ctx*/) override { }
+  virtual void exitStringConst(C0Parser::StringConstContext * /*ctx*/) override { }
 
 
   virtual void enterEveryRule(antlr4::ParserRuleContext * /*ctx*/) override { }

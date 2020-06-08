@@ -1,3 +1,5 @@
+#define DEBUG
+
 #include <iostream>
 using namespace std;
 
@@ -31,16 +33,23 @@ int main(int argc, char const *argv[]) {
 
     C0Lexer lexer(&input);
     CommonTokenStream tokens(&lexer);
-    tokens.fill();
+
+    C0Parser parser(&tokens);
+    tree::ParseTree* tree = parser.compilationUnit();
+
+#ifdef DEBUG
     for (auto token : tokens.getTokens()) {
         std::cout << token->toString() << std::endl;
     }
 
-    C0Parser parser(&tokens);
-    tree::ParseTree* tree = parser.program();
-
     std::cout << tree->toStringTree(&parser) << std::endl << std::endl;
-
+#endif
+    
+    if (lexer.getNumberOfSyntaxErrors() > 0 or
+        parser.getNumberOfSyntaxErrors() > 0) {
+        std::cout << "Lexical and/or syntactical errors have been found." << std::endl;
+        return EXIT_FAILURE;
+    }
     // CalculatorMyVisitor cal_vis;
     // double result = cal_vis.visit(tree);
     // std::cout << "Result: " << result << std::endl;

@@ -14,13 +14,13 @@ public:
   enum {
     T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, T__5 = 6, T__6 = 7, 
     T__7 = 8, T__8 = 9, T__9 = 10, T__10 = 11, T__11 = 12, T__12 = 13, T__13 = 14, 
-    T__14 = 15, T__15 = 16, T__16 = 17, T__17 = 18, T__18 = 19, SCANF = 20, 
-    PRINTF = 21, CONST = 22, VOID = 23, CHAR = 24, INT = 25, WHILE = 26, 
-    FOR = 27, IF = 28, ELSE = 29, RETURN = 30, BREAK = 31, CONTINUE = 32, 
-    OR = 33, AND = 34, LE = 35, GE = 36, EQ = 37, NE = 38, STRING = 39, 
-    IDENTITY = 40, LITERAL = 41, CCHAR = 42, DecimalConstant = 43, OctalConstant = 44, 
-    HexadecimalConstant = 45, ESC = 46, UNICODE = 47, HEX = 48, WS = 49, 
-    COMMENT = 50
+    T__14 = 15, T__15 = 16, T__16 = 17, T__17 = 18, T__18 = 19, T__19 = 20, 
+    T__20 = 21, T__21 = 22, T__22 = 23, T__23 = 24, T__24 = 25, T__25 = 26, 
+    T__26 = 27, T__27 = 28, T__28 = 29, T__29 = 30, T__30 = 31, T__31 = 32, 
+    T__32 = 33, T__33 = 34, T__34 = 35, T__35 = 36, T__36 = 37, T__37 = 38, 
+    T__38 = 39, T__39 = 40, T__40 = 41, T__41 = 42, T__42 = 43, CharLiteral = 44, 
+    StringLiteral = 45, Identifier = 46, DecimalInteger = 47, WS = 48, BLOCK_COMMENT = 49, 
+    LINE_COMMENT = 50
   };
 
   C0Lexer(antlr4::CharStream *input);

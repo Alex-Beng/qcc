@@ -19,47 +19,69 @@ public:
   /**
    * Visit parse trees produced by C0Parser.
    */
-    virtual antlrcpp::Any visitProgram(C0Parser::ProgramContext *context) = 0;
+    virtual antlrcpp::Any visitCompilationUnit(C0Parser::CompilationUnitContext *context) = 0;
 
-    virtual antlrcpp::Any visitDeclaration(C0Parser::DeclarationContext *context) = 0;
+    virtual antlrcpp::Any visitFunctionDefinition(C0Parser::FunctionDefinitionContext *context) = 0;
 
-    virtual antlrcpp::Any visitVar_declaration(C0Parser::Var_declarationContext *context) = 0;
+    virtual antlrcpp::Any visitVariableDefinition(C0Parser::VariableDefinitionContext *context) = 0;
 
-    virtual antlrcpp::Any visitTypeID(C0Parser::TypeIDContext *context) = 0;
+    virtual antlrcpp::Any visitParameter(C0Parser::ParameterContext *context) = 0;
 
-    virtual antlrcpp::Any visitFun_declaration(C0Parser::Fun_declarationContext *context) = 0;
+    virtual antlrcpp::Any visitTypeType(C0Parser::TypeTypeContext *context) = 0;
 
-    virtual antlrcpp::Any visitParams(C0Parser::ParamsContext *context) = 0;
+    virtual antlrcpp::Any visitBlock(C0Parser::BlockContext *context) = 0;
 
-    virtual antlrcpp::Any visitParam(C0Parser::ParamContext *context) = 0;
+    virtual antlrcpp::Any visitBlockStmt(C0Parser::BlockStmtContext *context) = 0;
 
-    virtual antlrcpp::Any visitStatement(C0Parser::StatementContext *context) = 0;
+    virtual antlrcpp::Any visitVarDefStmt(C0Parser::VarDefStmtContext *context) = 0;
 
-    virtual antlrcpp::Any visitExpression_statement(C0Parser::Expression_statementContext *context) = 0;
+    virtual antlrcpp::Any visitIfStmt(C0Parser::IfStmtContext *context) = 0;
 
-    virtual antlrcpp::Any visitScanf_statement(C0Parser::Scanf_statementContext *context) = 0;
+    virtual antlrcpp::Any visitForStmt(C0Parser::ForStmtContext *context) = 0;
 
-    virtual antlrcpp::Any visitPrintf_statement(C0Parser::Printf_statementContext *context) = 0;
+    virtual antlrcpp::Any visitWhileStmt(C0Parser::WhileStmtContext *context) = 0;
 
-    virtual antlrcpp::Any visitCompound_statement(C0Parser::Compound_statementContext *context) = 0;
+    virtual antlrcpp::Any visitReturnStmt(C0Parser::ReturnStmtContext *context) = 0;
 
-    virtual antlrcpp::Any visitLocal_declaration(C0Parser::Local_declarationContext *context) = 0;
+    virtual antlrcpp::Any visitBreakStmt(C0Parser::BreakStmtContext *context) = 0;
 
-    virtual antlrcpp::Any visitIf_statement(C0Parser::If_statementContext *context) = 0;
+    virtual antlrcpp::Any visitContinueStmt(C0Parser::ContinueStmtContext *context) = 0;
 
-    virtual antlrcpp::Any visitWhile_statement(C0Parser::While_statementContext *context) = 0;
+    virtual antlrcpp::Any visitExprStmt(C0Parser::ExprStmtContext *context) = 0;
 
-    virtual antlrcpp::Any visitFor_statement(C0Parser::For_statementContext *context) = 0;
+    virtual antlrcpp::Any visitBlankStmt(C0Parser::BlankStmtContext *context) = 0;
 
-    virtual antlrcpp::Any visitReturn_statement(C0Parser::Return_statementContext *context) = 0;
+    virtual antlrcpp::Any visitExpressionList(C0Parser::ExpressionListContext *context) = 0;
 
-    virtual antlrcpp::Any visitBreak_statement(C0Parser::Break_statementContext *context) = 0;
+    virtual antlrcpp::Any visitLogicalOrExpr(C0Parser::LogicalOrExprContext *context) = 0;
 
-    virtual antlrcpp::Any visitContinue_statement(C0Parser::Continue_statementContext *context) = 0;
+    virtual antlrcpp::Any visitPrefixExpr(C0Parser::PrefixExprContext *context) = 0;
 
-    virtual antlrcpp::Any visitExpression(C0Parser::ExpressionContext *context) = 0;
+    virtual antlrcpp::Any visitPrimaryExpr(C0Parser::PrimaryExprContext *context) = 0;
 
-    virtual antlrcpp::Any visitArgs(C0Parser::ArgsContext *context) = 0;
+    virtual antlrcpp::Any visitLogicalAndExpr(C0Parser::LogicalAndExprContext *context) = 0;
+
+    virtual antlrcpp::Any visitFuncallExpr(C0Parser::FuncallExprContext *context) = 0;
+
+    virtual antlrcpp::Any visitArefExpr(C0Parser::ArefExprContext *context) = 0;
+
+    virtual antlrcpp::Any visitSuffixExpr(C0Parser::SuffixExprContext *context) = 0;
+
+    virtual antlrcpp::Any visitBinaryExpr(C0Parser::BinaryExprContext *context) = 0;
+
+    virtual antlrcpp::Any visitAssignExpr(C0Parser::AssignExprContext *context) = 0;
+
+    virtual antlrcpp::Any visitSubExpr(C0Parser::SubExprContext *context) = 0;
+
+    virtual antlrcpp::Any visitVariableExpr(C0Parser::VariableExprContext *context) = 0;
+
+    virtual antlrcpp::Any visitLiteralExpr(C0Parser::LiteralExprContext *context) = 0;
+
+    virtual antlrcpp::Any visitDecIntegerConst(C0Parser::DecIntegerConstContext *context) = 0;
+
+    virtual antlrcpp::Any visitCharConst(C0Parser::CharConstContext *context) = 0;
+
+    virtual antlrcpp::Any visitStringConst(C0Parser::StringConstContext *context) = 0;
 
 
 };

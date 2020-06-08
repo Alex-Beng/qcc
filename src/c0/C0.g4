@@ -1,254 +1,113 @@
 grammar C0;
 
-program  
-   : declaration+
-	;
-
-declaration
-   : var_declaration
-   | fun_declaration
+compilationUnit
+   : (variableDefinition | functionDefinition )* EOF
    ;
 
-var_declaration
-   : typeID IDENTITY ';'
-   | typeID IDENTITY '=' expression ';'
-   | typeID IDENTITY '=' IDENTITY ';'
-   | typeID IDENTITY '[' expression ']' ';'
+functionDefinition
+   : ret=typeType? name=Identifier'(' (parameter (',' parameter)*)? ')'
+            block
    ;
 
-typeID
-   : INT
-   | CHAR
-   | VOID
-   | CONST INT
-   | CONST CHAR
+variableDefinition
+    : typeType Identifier ('=' expression)? ';'
+    | typeType Identifier '[' expression ']' ';'
+    ;
+
+parameter
+    : typeType Identifier
+    ;
+   
+typeType
+   : type = ('int' | 'char' | 'const int' | 'const char' | 'void')
    ;
 
-fun_declaration
-   : typeID IDENTITY '(' params ')' compound_statement
-   ;
-
-params
-   : param (',' param)*
-   | VOID
-   | 
-   ;
-
-param 
-   : typeID IDENTITY
-   ;
+block
+    : '{' statement* '}'
+    ;
 
 statement
-   : expression_statement
-   | scanf_statement
-   | printf_statement
-   | compound_statement
-   | if_statement
-   | while_statement
-   | for_statement
-   | return_statement
-   | break_statement
-   | continue_statement
-   ;
+    : block                                                              # blockStmt
+    | variableDefinition                                                 # varDefStmt
+    | 'if' '(' expression ')' statement ('else' statement)?              # ifStmt
+    | 'for' '(' init=expression? ';' cond=expression? ';'
+                                     incr=expression? ')' statement      # forStmt
+    | 'while' '(' expression ')' statement                               # whileStmt
+    | 'return' expression? ';'                                           # returnStmt
+    | 'break' ';'                                                        # breakStmt
+    | 'continue' ';'                                                     # continueStmt
+    | expression ';'                                                     # exprStmt
+    | ';'                                                                # blankStmt
+    ;
 
-expression_statement
-   : expression ';'
-   ;
-
-scanf_statement
-   : SCANF '(' args ')' ';'
-   ;
-
-printf_statement
-   : PRINTF '(' STRING ')' ';'
-   | PRINTF '(' STRING args ')' ';'
-   | PRINTF '(' args ')' ';'
-   ;
-
-compound_statement		
-   : '{' local_declaration* statement* '}'
-   ;
-
-
-local_declaration
-   : typeID IDENTITY ';'
-   | typeID IDENTITY '=' expression ';'
-   | typeID IDENTITY '=' IDENTITY ';'
-   | typeID IDENTITY '[' expression ']' ';'
-   ;
-
-if_statement
-   : IF '(' expression ')' statement
-   | IF '(' expression ')' ELSE statement
-   ;
-
-while_statement
-   : WHILE '(' expression ')' statement
-   ;
-
-for_statement
-   : FOR '(' local_declaration expression ';' expression ')' statement
-   ;
-
-return_statement
-   : RETURN ';'
-   | RETURN expression ';'
-   ;
-
-break_statement
-   : BREAK ';'
-   ;
-
-continue_statement
-   : CONTINUE ';'
-   ;
+expressionList
+    : expression (',' expression)*
+    ;
 
 expression
-   : LITERAL
-   | CCHAR
-   | '(' expression ')'
-   | IDENTITY
-   | IDENTITY '[' expression ']'
-   | IDENTITY '(' args ')'
-   | '-' expression  // set neg
-   | '+' expression  // set pos
-   | '--' expression
-   | '++' expression
-   | expression '*' expression
-   | expression '/' expression
-   | expression '%' expression
-   | expression '+' expression
-   | expression '-' expression
-   | expression EQ expression
-   | expression NE expression
-   | expression LE expression
-   | expression '<' expression
-   | expression GE expression
-   | expression '>' expression
-   | '!' expression
-   | expression AND expression
-   | expression OR expression
-   | IDENTITY '=' expression
-   | IDENTITY '[' expression ']' '=' expression
-   ;
+    : primary                                            # primaryExpr
+    | expression '[' expression ']'                      # arefExpr
+    | expression '(' expressionList? ')'                 # funcallExpr
+    | expression op=('++' | '--')                        # suffixExpr
+    | op=('+' | '-' | '++' | '--') expression            # prefixExpr
+    | op=('~' | '!' ) expression                         # prefixExpr
+    | expression op=('*' | '/' | '%') expression         # binaryExpr
+    | expression op=('+' | '-') expression               # binaryExpr
+    | expression op=('<<' | '>>') expression             # binaryExpr
+    | expression op=('<' | '>' | '>=' | '<=') expression # binaryExpr
+    | expression op=('==' | '!=' ) expression            # binaryExpr
+    | expression op='&' expression                       # binaryExpr
+    | expression op='^' expression                       # binaryExpr
+    | expression op='|' expression                       # binaryExpr
+    | expression '&&' expression                         # logicalAndExpr
+    | expression '||' expression                         # logicalOrExpr
+    | <assoc=right> expression '=' expression            # assignExpr // 指定右结合
+    ;
 
-args
-   : expression (',' expression)*
-   |
-   ;
+primary
+    : '(' expression ')'   # subExpr
+    | Identifier           # variableExpr
+    | literal              # literalExpr
+    ;
 
-SCANF
-   : 'scanf'
-   ;
+literal
+    : DecimalInteger          # DecIntegerConst
+    | CharLiteral             # CharConst
+    | StringLiteral           # StringConst
+    ;
 
-PRINTF
-   : 'printf'
-   ;
+CharLiteral
+    : '\'' Character '\''
+    ;
 
-CONST
-   : 'const'
-   ;
-
-VOID				
-   : 'void'
-   ;
-CHAR
-   : 'char'
-   ;
-INT				
-   : 'int'
-   ;
-WHILE				
-   : 'while'
-   ;
-FOR
-   : 'for'
-   ;
-IF					
-   : 'if'
-   ;
-ELSE				
-   : 'else'
-   ;
-RETURN				  
-   : 'return'
-   ;
-BREAK               
-   : 'break'
-   ;
-CONTINUE            
-   : 'continue'
-   ;
-OR					
-   : 'or'
-   ;
-AND				
-   : 'and'
-   ;
-LE					
-   : '<='
-   ;
-GE					
-   : '>='
-   ;
-EQ					
-   : '=='
-   ;
-NE					
-   : '!='
-   ;
+StringLiteral
+    : '"' Character* '"'
+    ;
 
 
-STRING
-   : '"' (ESC | ~ ["\\])* '"'
-   ;
+fragment
+Character
+    : ~["\\\n\r]
+    | '\\' ["n\\]
+    ;
 
-IDENTITY  				
-   : [a-zA-Z_]([a-zA-Z_]|[0-9])*
-   ;
+Identifier
+    : [a-zA-Z_] [a-zA-Z_0-9]*
+    ;
 
-LITERAL
-   : DecimalConstant
-   | OctalConstant
-   | HexadecimalConstant
-   ;
+DecimalInteger
+    : [1-9] [0-9]*
+    | '0'
+    ;
 
-CCHAR
-   : '\'' [a-zA-Z_] '\''
-   ;
+WS
+    : [ \t\r\n]+ -> skip
+    ;
 
-DecimalConstant		
-   : '0'
-   | [1-9][0-9]*
-   ;
+BLOCK_COMMENT
+    : '/*' .*? '*/' -> skip
+    ;
 
-OctalConstant		
-   : '0'[0-7]*
-   ;
-
-HexadecimalConstant	
-   : '0'[xX][0-9a-fA-F]+
-   ;
-
-ESC
-   : '\\' (["\\/bfnrt] | UNICODE)
-   ;
-
-UNICODE
-   : 'u' HEX HEX HEX HEX
-   ;
-
- HEX
-   : [0-9a-fA-F]
-   ;
-
-WS					
-   : (' '|'\t'|'\r'|'\n')+
-   -> channel(HIDDEN)
-   ;
-
-COMMENT
-    :   ( '//' ~[\r\n]* '\r'? '\n'
-        | '/*' .*? '*/'
-        ) -> channel(HIDDEN)
+LINE_COMMENT
+    : '//' ~[\r\n]* -> skip
     ;

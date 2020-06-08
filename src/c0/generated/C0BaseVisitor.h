@@ -15,87 +15,131 @@
 class  C0BaseVisitor : public C0Visitor {
 public:
 
-  virtual antlrcpp::Any visitProgram(C0Parser::ProgramContext *ctx) override {
+  virtual antlrcpp::Any visitCompilationUnit(C0Parser::CompilationUnitContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitDeclaration(C0Parser::DeclarationContext *ctx) override {
+  virtual antlrcpp::Any visitFunctionDefinition(C0Parser::FunctionDefinitionContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitVar_declaration(C0Parser::Var_declarationContext *ctx) override {
+  virtual antlrcpp::Any visitVariableDefinition(C0Parser::VariableDefinitionContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitTypeID(C0Parser::TypeIDContext *ctx) override {
+  virtual antlrcpp::Any visitParameter(C0Parser::ParameterContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitFun_declaration(C0Parser::Fun_declarationContext *ctx) override {
+  virtual antlrcpp::Any visitTypeType(C0Parser::TypeTypeContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitParams(C0Parser::ParamsContext *ctx) override {
+  virtual antlrcpp::Any visitBlock(C0Parser::BlockContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitParam(C0Parser::ParamContext *ctx) override {
+  virtual antlrcpp::Any visitBlockStmt(C0Parser::BlockStmtContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitStatement(C0Parser::StatementContext *ctx) override {
+  virtual antlrcpp::Any visitVarDefStmt(C0Parser::VarDefStmtContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitExpression_statement(C0Parser::Expression_statementContext *ctx) override {
+  virtual antlrcpp::Any visitIfStmt(C0Parser::IfStmtContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitScanf_statement(C0Parser::Scanf_statementContext *ctx) override {
+  virtual antlrcpp::Any visitForStmt(C0Parser::ForStmtContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitPrintf_statement(C0Parser::Printf_statementContext *ctx) override {
+  virtual antlrcpp::Any visitWhileStmt(C0Parser::WhileStmtContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitCompound_statement(C0Parser::Compound_statementContext *ctx) override {
+  virtual antlrcpp::Any visitReturnStmt(C0Parser::ReturnStmtContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitLocal_declaration(C0Parser::Local_declarationContext *ctx) override {
+  virtual antlrcpp::Any visitBreakStmt(C0Parser::BreakStmtContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitIf_statement(C0Parser::If_statementContext *ctx) override {
+  virtual antlrcpp::Any visitContinueStmt(C0Parser::ContinueStmtContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitWhile_statement(C0Parser::While_statementContext *ctx) override {
+  virtual antlrcpp::Any visitExprStmt(C0Parser::ExprStmtContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitFor_statement(C0Parser::For_statementContext *ctx) override {
+  virtual antlrcpp::Any visitBlankStmt(C0Parser::BlankStmtContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitReturn_statement(C0Parser::Return_statementContext *ctx) override {
+  virtual antlrcpp::Any visitExpressionList(C0Parser::ExpressionListContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitBreak_statement(C0Parser::Break_statementContext *ctx) override {
+  virtual antlrcpp::Any visitLogicalOrExpr(C0Parser::LogicalOrExprContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitContinue_statement(C0Parser::Continue_statementContext *ctx) override {
+  virtual antlrcpp::Any visitPrefixExpr(C0Parser::PrefixExprContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitExpression(C0Parser::ExpressionContext *ctx) override {
+  virtual antlrcpp::Any visitPrimaryExpr(C0Parser::PrimaryExprContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitArgs(C0Parser::ArgsContext *ctx) override {
+  virtual antlrcpp::Any visitLogicalAndExpr(C0Parser::LogicalAndExprContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitFuncallExpr(C0Parser::FuncallExprContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitArefExpr(C0Parser::ArefExprContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitSuffixExpr(C0Parser::SuffixExprContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitBinaryExpr(C0Parser::BinaryExprContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitAssignExpr(C0Parser::AssignExprContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitSubExpr(C0Parser::SubExprContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitVariableExpr(C0Parser::VariableExprContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitLiteralExpr(C0Parser::LiteralExprContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitDecIntegerConst(C0Parser::DecIntegerConstContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitCharConst(C0Parser::CharConstContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitStringConst(C0Parser::StringConstContext *ctx) override {
     return visitChildren(ctx);
   }
 

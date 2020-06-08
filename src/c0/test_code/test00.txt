@@ -9,8 +9,11 @@ int func() {
      
 }
 
-void main(void) {
+void main() {
      int b;
+     while(a) {
+          printf("fuck you");
+     } 
      while (true) {
           const int a = 1;
           int b = -a;
@@ -19,10 +22,10 @@ void main(void) {
           if (i == 1) 
                break;
           printf(" ");
-          printf("%d" i);
+          printf("%d", i);
           printf(i);
           printf(i, i);
-          printf("%d" i+i);
+          printf("%d", i+i);
           scanf(b);
           scanf(b, b);
      }
