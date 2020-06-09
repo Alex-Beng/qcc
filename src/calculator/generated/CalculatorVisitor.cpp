@@ -5,5 +5,3 @@
 #include "CalculatorVisitor.h"
 
 
-using namespace antlrcpptest;
-

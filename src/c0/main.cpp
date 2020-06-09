@@ -31,6 +31,7 @@ int main(int argc, char const *argv[]) {
     }
 
 
+
     C0Lexer lexer(&input);
     CommonTokenStream tokens(&lexer);
 
@@ -44,15 +45,16 @@ int main(int argc, char const *argv[]) {
 
     std::cout << tree->toStringTree(&parser) << std::endl << std::endl;
 #endif
-    
+
     if (lexer.getNumberOfSyntaxErrors() > 0 or
         parser.getNumberOfSyntaxErrors() > 0) {
         std::cout << "Lexical and/or syntactical errors have been found." << std::endl;
         return EXIT_FAILURE;
     }
-    // CalculatorMyVisitor cal_vis;
-    // double result = cal_vis.visit(tree);
-    // std::cout << "Result: " << result << std::endl;
+
+    antlr4::tree::ParseTreeWalker walker;
+
+    walker.w
     return 0;
 }
 

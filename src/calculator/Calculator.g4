@@ -1,59 +1,27 @@
 grammar Calculator;
-INT    : [0-9]+;
-DOUBLE : [0-9]+'.'[0-9]+;
-PI     : 'pi';
-E      : 'e';
-POW    : '^';
-// new line
-NL     : '\n';
-// white space
-WS     : [ \t\r]+ -> skip;
-ID     : [a-zA-Z_][a-zA-Z_0-9]*;
 
-PLUS  : '+';
-EQUAL : '=';
-MINUS : '-';
-MULT  : '*';
-DIV   : '/';
-LPAR  : '(';
-RPAR  : ')';
+prog
+    : stat+ ;
 
-input
-    : setVar NL input     # ToSetVar
-    | plusOrMinus NL? EOF # Calculate
+stat
+    : expr NEWLINE          #printExpr
+    | ID '=' expr NEWLINE   #assign
+    | NEWLINE               #blank
     ;
 
-setVar
-    : ID EQUAL plusOrMinus # SetVariable
+expr
+    : expr ('^') expr       #Power
+    | expr op=('*' | '/') expr #MulDiv
+    | expr op=('+'|'-') expr   #AddSub
+    | INT                   #int
+    | ID                    #id
+    | '(' expr ')'          #parens
     ;
 
+ID  : [a-zA-Z]+ ;
 
-plusOrMinus 
-    : plusOrMinus PLUS multOrDiv  # Plus
-    | plusOrMinus MINUS multOrDiv # Minus
-    | multOrDiv                   # ToMultOrDiv
-    ;
+INT : [0-9]+ ;
 
-multOrDiv
-    : multOrDiv MULT pow # Multiplication
-    | multOrDiv DIV pow  # Division
-    | pow                # ToPow
-    ;
+NEWLINE :'\r'? '\n' ;
 
-pow
-    : unaryMinus (POW pow)? # Power
-    ;
-
-unaryMinus
-    : MINUS unaryMinus # ChangeSign
-    | atom             # ToAtom
-    ;
-
-atom
-    : PI                    # ConstantPI
-    | E                     # ConstantE
-    | DOUBLE                # Double
-    | INT                   # Int
-    | ID                    # Variable
-    | LPAR plusOrMinus RPAR # Braces
-    ;
+WS  : [ \t]+ -> skip ;

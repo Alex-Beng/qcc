@@ -1,4 +1,6 @@
 a = 3
-b = a*a
-c = a + a^b
+b = a^a
+c = 67+90
+b
+c = a^b - a
 c

@@ -7,14 +7,13 @@
 #include "antlr4-runtime.h"
 
 
-namespace antlrcpptest {
 
 
 class  CalculatorLexer : public antlr4::Lexer {
 public:
   enum {
-    INT = 1, DOUBLE = 2, PI = 3, E = 4, POW = 5, NL = 6, WS = 7, ID = 8, 
-    PLUS = 9, EQUAL = 10, MINUS = 11, MULT = 12, DIV = 13, LPAR = 14, RPAR = 15
+    T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, T__5 = 6, T__6 = 7, 
+    T__7 = 8, ID = 9, INT = 10, NEWLINE = 11, WS = 12
   };
 
   CalculatorLexer(antlr4::CharStream *input);
@@ -56,4 +55,3 @@ private:
   static Initializer _init;
 };
 
-}  // namespace antlrcpptest

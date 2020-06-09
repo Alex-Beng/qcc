@@ -9,7 +9,6 @@ using namespace std;
 #include "generated/CalculatorParser.h"
 #include "generated/CalculatorBaseVisitor.h"
 
-using namespace antlrcpptest;
 using namespace antlr4;
 
 int main(int argc, char const *argv[]) {
@@ -27,11 +26,13 @@ int main(int argc, char const *argv[]) {
     }
 
     CalculatorParser parser(&tokens);
-    tree::ParseTree* tree = parser.input();
+    tree::ParseTree* tree = parser.prog();
 
-    CalculatorMyVisitor cal_vis;
-    double result = cal_vis.visit(tree);
-    std::cout << "Result: " << result << std::endl;
+    // cout<<tree->toStringTree(&parser);
+    CalculatorMyVisitor eval;
+    eval.visit(tree);
+    
+
     return 0;
 }
 

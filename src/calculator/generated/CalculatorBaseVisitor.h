@@ -8,8 +8,6 @@
 #include "CalculatorVisitor.h"
 
 
-namespace antlrcpptest {
-
 /**
  * This class provides an empty implementation of CalculatorVisitor, which can be
  * extended to create a visitor which only needs to handle a subset of the available methods.
@@ -17,63 +15,35 @@ namespace antlrcpptest {
 class  CalculatorBaseVisitor : public CalculatorVisitor {
 public:
 
-  virtual antlrcpp::Any visitToSetVar(CalculatorParser::ToSetVarContext *ctx) override {
+  virtual antlrcpp::Any visitProg(CalculatorParser::ProgContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitCalculate(CalculatorParser::CalculateContext *ctx) override {
+  virtual antlrcpp::Any visitPrintExpr(CalculatorParser::PrintExprContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitSetVariable(CalculatorParser::SetVariableContext *ctx) override {
+  virtual antlrcpp::Any visitAssign(CalculatorParser::AssignContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitToMultOrDiv(CalculatorParser::ToMultOrDivContext *ctx) override {
+  virtual antlrcpp::Any visitBlank(CalculatorParser::BlankContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitPlus(CalculatorParser::PlusContext *ctx) override {
+  virtual antlrcpp::Any visitParens(CalculatorParser::ParensContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitMinus(CalculatorParser::MinusContext *ctx) override {
+  virtual antlrcpp::Any visitMulDiv(CalculatorParser::MulDivContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitMultiplication(CalculatorParser::MultiplicationContext *ctx) override {
+  virtual antlrcpp::Any visitAddSub(CalculatorParser::AddSubContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitDivision(CalculatorParser::DivisionContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitToPow(CalculatorParser::ToPowContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitPower(CalculatorParser::PowerContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitChangeSign(CalculatorParser::ChangeSignContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitToAtom(CalculatorParser::ToAtomContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitConstantPI(CalculatorParser::ConstantPIContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitConstantE(CalculatorParser::ConstantEContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitDouble(CalculatorParser::DoubleContext *ctx) override {
+  virtual antlrcpp::Any visitId(CalculatorParser::IdContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -81,15 +51,10 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitVariable(CalculatorParser::VariableContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitBraces(CalculatorParser::BracesContext *ctx) override {
+  virtual antlrcpp::Any visitPower(CalculatorParser::PowerContext *ctx) override {
     return visitChildren(ctx);
   }
 
 
 };
 
-}  // namespace antlrcpptest

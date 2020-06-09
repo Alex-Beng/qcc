@@ -8,7 +8,6 @@
 #include "CalculatorParser.h"
 
 
-namespace antlrcpptest {
 
 /**
  * This class defines an abstract visitor for a parse tree
@@ -20,43 +19,26 @@ public:
   /**
    * Visit parse trees produced by CalculatorParser.
    */
-    virtual antlrcpp::Any visitToSetVar(CalculatorParser::ToSetVarContext *context) = 0;
+    virtual antlrcpp::Any visitProg(CalculatorParser::ProgContext *context) = 0;
 
-    virtual antlrcpp::Any visitCalculate(CalculatorParser::CalculateContext *context) = 0;
+    virtual antlrcpp::Any visitPrintExpr(CalculatorParser::PrintExprContext *context) = 0;
 
-    virtual antlrcpp::Any visitSetVariable(CalculatorParser::SetVariableContext *context) = 0;
+    virtual antlrcpp::Any visitAssign(CalculatorParser::AssignContext *context) = 0;
 
-    virtual antlrcpp::Any visitToMultOrDiv(CalculatorParser::ToMultOrDivContext *context) = 0;
+    virtual antlrcpp::Any visitBlank(CalculatorParser::BlankContext *context) = 0;
 
-    virtual antlrcpp::Any visitPlus(CalculatorParser::PlusContext *context) = 0;
+    virtual antlrcpp::Any visitParens(CalculatorParser::ParensContext *context) = 0;
 
-    virtual antlrcpp::Any visitMinus(CalculatorParser::MinusContext *context) = 0;
+    virtual antlrcpp::Any visitMulDiv(CalculatorParser::MulDivContext *context) = 0;
 
-    virtual antlrcpp::Any visitMultiplication(CalculatorParser::MultiplicationContext *context) = 0;
+    virtual antlrcpp::Any visitAddSub(CalculatorParser::AddSubContext *context) = 0;
 
-    virtual antlrcpp::Any visitDivision(CalculatorParser::DivisionContext *context) = 0;
-
-    virtual antlrcpp::Any visitToPow(CalculatorParser::ToPowContext *context) = 0;
-
-    virtual antlrcpp::Any visitPower(CalculatorParser::PowerContext *context) = 0;
-
-    virtual antlrcpp::Any visitChangeSign(CalculatorParser::ChangeSignContext *context) = 0;
-
-    virtual antlrcpp::Any visitToAtom(CalculatorParser::ToAtomContext *context) = 0;
-
-    virtual antlrcpp::Any visitConstantPI(CalculatorParser::ConstantPIContext *context) = 0;
-
-    virtual antlrcpp::Any visitConstantE(CalculatorParser::ConstantEContext *context) = 0;
-
-    virtual antlrcpp::Any visitDouble(CalculatorParser::DoubleContext *context) = 0;
+    virtual antlrcpp::Any visitId(CalculatorParser::IdContext *context) = 0;
 
     virtual antlrcpp::Any visitInt(CalculatorParser::IntContext *context) = 0;
 
-    virtual antlrcpp::Any visitVariable(CalculatorParser::VariableContext *context) = 0;
-
-    virtual antlrcpp::Any visitBraces(CalculatorParser::BracesContext *context) = 0;
+    virtual antlrcpp::Any visitPower(CalculatorParser::PowerContext *context) = 0;
 
 
 };
 
-}  // namespace antlrcpptest

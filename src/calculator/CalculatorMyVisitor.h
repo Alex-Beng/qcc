@@ -5,71 +5,70 @@
 #include <map>
 #include <sstream>
 
+#include <antlr4-runtime/antlr4-runtime.h>
 #include <antlr4-runtime/support/Any.h>
 #include "generated/CalculatorParser.h"
 #include "generated/CalculatorBaseVisitor.h"
 
-using namespace antlrcpptest;
+
 using namespace antlrcpp;
 
-class CalculatorMyVisitor : public antlrcpptest::CalculatorBaseVisitor {
+class CalculatorMyVisitor : public CalculatorBaseVisitor {
 private:
-    std::map<std::string, double> variables;
+    std::map<std::string, double> memory;
 public:
-    Any visitPlus(CalculatorParser::PlusContext *ctx) {
-        return (double)visit(ctx->plusOrMinus()) + (double)visit(ctx->multOrDiv());
-    }
-    Any visitMinus(CalculatorParser::PlusContext *ctx) {
-        return (double)visit(ctx->plusOrMinus()) + (double)visit(ctx->multOrDiv());
-    }
-    Any visitMultiplication(CalculatorParser::MultiplicationContext *ctx) {
-        return (double)visit(ctx->multOrDiv()) * (double)visit(ctx->pow());
-    }
-    Any visitDivision(CalculatorParser::DivisionContext *ctx) {
-        return (double)visit(ctx->multOrDiv()) / (double)visit(ctx->pow());
-    }
-    Any visitSetVariable(CalculatorParser::SetVariableContext *ctx) {
-        double value = visit(ctx->plusOrMinus());
-        variables[ctx->ID()->getText()] = value;
+    antlrcpp::Any visitAssign(CalculatorParser::AssignContext *ctx)  {
+        std::string id = ctx->ID()->getText();
+        double value = visit((antlr4::tree::ParseTree*)ctx->expr());
+
+        memory[id] = value;
         return value;
     }
-    Any visitPower(CalculatorParser::PowerContext *ctx) {
-        if (ctx->pow() != NULL) {
-            return pow((double)visit(ctx->unaryMinus()), (double)visit(ctx->pow()));
+    antlrcpp::Any visitPrintExpr(CalculatorParser::PrintExprContext *ctx)  {
+        double value = visit(ctx->expr());
+        cout<<value<<endl;
+        return 0;
+    }
+    antlrcpp::Any visitInt(CalculatorParser::IntContext *ctx)  {
+        return std::stod(ctx->INT()->getText());
+    }
+    antlrcpp::Any visitId(CalculatorParser::IdContext *ctx)  {
+        std::string id = ctx->ID()->getText();
+        auto item = memory.find(id);
+        if (item == memory.end()) 
+            return 0;
+        else 
+            return memory[id];
+    }
+    antlrcpp::Any visitPower(CalculatorParser::PowerContext *ctx)  {
+        double left = visit(ctx->expr(0));
+        double right = visit(ctx->expr(1));
+        return pow(left, right);
+    }
+    antlrcpp::Any visitMulDiv(CalculatorParser::MulDivContext *ctx)  {
+        double left = visit(ctx->expr(0));
+        double right = visit(ctx->expr(1));
+        if (ctx->op->getText() == "*") {
+            return left*right;
         }
-        return visit(ctx->unaryMinus());
+        else {
+            return left/right;
+        }
     }
-    Any visitChangeSign(CalculatorParser::ChangeSignContext *ctx) {
-        return -1*(double)visit(ctx->unaryMinus());
+    antlrcpp::Any visitAddSub(CalculatorParser::AddSubContext *ctx)  {
+        double left = visit(ctx->expr(0));
+        double right = visit(ctx->expr(1));
+        if (ctx->op->getText() == "+") {
+            return left+right;
+        }
+        else {
+            return left-right;
+        }
+
     }
-    Any visitBraces(CalculatorParser::BracesContext *ctx) {
-        return visit(ctx->plusOrMinus());
+    antlrcpp::Any visitParens(CalculatorParser::ParensContext *ctx)  {
+        return visit(ctx->expr());
     }
-    Any visitConstantPI(CalculatorParser::ConstantPIContext *ctx) {
-        return M_PI;
-    }
-    Any visitConstantE(CalculatorParser::ConstantEContext *ctx) {
-        return M_E;
-    }
-    Any visitInt(CalculatorParser::IntContext *ctx) {
-        std::string t_s = ctx->INT()->getText();
-        std::stringstream t_ss(t_s);
-        double t_n;
-        t_ss >> t_n;
-        return t_n;
-    }
-    Any visitVariable(CalculatorParser::VariableContext *ctx) {
-        return variables[ctx->ID()->getText()];
-    }
-    Any visitDouble(CalculatorParser::DoubleContext *ctx) {
-        std::string t_s = ctx->DOUBLE()->getText();
-        std::stringstream t_ss(t_s);
-        double t_n;
-        t_ss >> t_n;
-        return t_n;
-    }
-    Any visitCalculate(CalculatorParser::CalculateContext *ctx) {
-        return visit(ctx->plusOrMinus());
-    }
+
 };
 #endif

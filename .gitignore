@@ -8,3 +8,5 @@
 antlr4-runtime
 *.log
 MiniC.g4
+*.gch
+*.class
