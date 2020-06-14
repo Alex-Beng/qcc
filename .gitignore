@@ -10,3 +10,6 @@ antlr4-runtime
 MiniC.g4
 *.gch
 *.class
+*.a
+build
+qcc

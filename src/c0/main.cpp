@@ -1,12 +1,11 @@
-#define DEBUG
-
-#include <iostream>
-using namespace std;
+#include "common_headers.h"
 
 #include <antlr4-runtime/antlr4-runtime.h>
 
 #include "generated/C0Lexer.h"
 #include "generated/C0Parser.h"
+
+#include "IRListener.h"
 
 using namespace antlr4;
 
@@ -33,10 +32,10 @@ int main(int argc, char const *argv[]) {
 
 
     C0Lexer lexer(&input);
-    CommonTokenStream tokens(&lexer);
+    antlr4::CommonTokenStream tokens(&lexer);
 
     C0Parser parser(&tokens);
-    tree::ParseTree* tree = parser.compilationUnit();
+    antlr4::tree::ParseTree* tree = parser.compilationUnit();
 
 #ifdef DEBUG
     for (auto token : tokens.getTokens()) {
@@ -53,8 +52,9 @@ int main(int argc, char const *argv[]) {
     }
 
     antlr4::tree::ParseTreeWalker walker;
+    IRListener ir_listener;
+    walker.walk(&ir_listener, tree);
 
-    walker.w
     return 0;
 }
 

@@ -22,8 +22,11 @@ public:
   virtual void enterFunctionDefinition(C0Parser::FunctionDefinitionContext * /*ctx*/) override { }
   virtual void exitFunctionDefinition(C0Parser::FunctionDefinitionContext * /*ctx*/) override { }
 
-  virtual void enterVariableDefinition(C0Parser::VariableDefinitionContext * /*ctx*/) override { }
-  virtual void exitVariableDefinition(C0Parser::VariableDefinitionContext * /*ctx*/) override { }
+  virtual void enterDefVar(C0Parser::DefVarContext * /*ctx*/) override { }
+  virtual void exitDefVar(C0Parser::DefVarContext * /*ctx*/) override { }
+
+  virtual void enterDefArray(C0Parser::DefArrayContext * /*ctx*/) override { }
+  virtual void exitDefArray(C0Parser::DefArrayContext * /*ctx*/) override { }
 
   virtual void enterParameter(C0Parser::ParameterContext * /*ctx*/) override { }
   virtual void exitParameter(C0Parser::ParameterContext * /*ctx*/) override { }

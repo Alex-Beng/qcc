@@ -77,10 +77,10 @@ public:
     FunctionDefinitionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     BlockContext *block();
+    TypeTypeContext *typeType();
     antlr4::tree::TerminalNode *Identifier();
     std::vector<ParameterContext *> parameter();
     ParameterContext* parameter(size_t i);
-    TypeTypeContext *typeType();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -94,16 +94,40 @@ public:
   class  VariableDefinitionContext : public antlr4::ParserRuleContext {
   public:
     VariableDefinitionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+   
+    VariableDefinitionContext() = default;
+    void copyFrom(VariableDefinitionContext *context);
+    using antlr4::ParserRuleContext::copyFrom;
+
     virtual size_t getRuleIndex() const override;
+
+   
+  };
+
+  class  DefVarContext : public VariableDefinitionContext {
+  public:
+    DefVarContext(VariableDefinitionContext *ctx);
+
     TypeTypeContext *typeType();
     antlr4::tree::TerminalNode *Identifier();
     ExpressionContext *expression();
-
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
 
     virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-   
+  };
+
+  class  DefArrayContext : public VariableDefinitionContext {
+  public:
+    DefArrayContext(VariableDefinitionContext *ctx);
+
+    TypeTypeContext *typeType();
+    antlr4::tree::TerminalNode *Identifier();
+    ExpressionContext *expression();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
   VariableDefinitionContext* variableDefinition();

@@ -5,13 +5,13 @@ compilationUnit
    ;
 
 functionDefinition
-   : ret=typeType? name=Identifier'(' (parameter (',' parameter)*)? ')'
+   : ret=typeType name=Identifier'(' (parameter (',' parameter)*)? ')'
             block
    ;
 
 variableDefinition
-    : typeType Identifier ('=' expression)? ';'
-    | typeType Identifier '[' expression ']' ';'
+    : typeType Identifier ('=' expression)? ';'         #defVar
+    | typeType Identifier '[' expression ']' ';'        #defArray
     ;
 
 parameter

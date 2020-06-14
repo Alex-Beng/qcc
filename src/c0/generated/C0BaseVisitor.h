@@ -23,7 +23,11 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitVariableDefinition(C0Parser::VariableDefinitionContext *ctx) override {
+  virtual antlrcpp::Any visitDefVar(C0Parser::DefVarContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitDefArray(C0Parser::DefArrayContext *ctx) override {
     return visitChildren(ctx);
   }
 

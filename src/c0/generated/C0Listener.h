@@ -20,8 +20,11 @@ public:
   virtual void enterFunctionDefinition(C0Parser::FunctionDefinitionContext *ctx) = 0;
   virtual void exitFunctionDefinition(C0Parser::FunctionDefinitionContext *ctx) = 0;
 
-  virtual void enterVariableDefinition(C0Parser::VariableDefinitionContext *ctx) = 0;
-  virtual void exitVariableDefinition(C0Parser::VariableDefinitionContext *ctx) = 0;
+  virtual void enterDefVar(C0Parser::DefVarContext *ctx) = 0;
+  virtual void exitDefVar(C0Parser::DefVarContext *ctx) = 0;
+
+  virtual void enterDefArray(C0Parser::DefArrayContext *ctx) = 0;
+  virtual void exitDefArray(C0Parser::DefArrayContext *ctx) = 0;
 
   virtual void enterParameter(C0Parser::ParameterContext *ctx) = 0;
   virtual void exitParameter(C0Parser::ParameterContext *ctx) = 0;
