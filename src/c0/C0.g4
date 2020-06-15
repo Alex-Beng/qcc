@@ -10,8 +10,9 @@ functionDefinition
    ;
 
 variableDefinition
-    : typeType Identifier ('=' expression)? ';'         #defVar
-    | typeType Identifier '[' expression ']' ';'        #defArray
+    : typeType Identifier ';'                           #defVar
+    | typeType Identifier ('=' lhs=(CharLiteral|DecimalInteger))? ';'         #defConst
+    | typeType Identifier '[' DecimalInteger ']' ';'    #defArray
     ;
 
 parameter

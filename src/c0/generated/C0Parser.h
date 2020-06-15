@@ -110,7 +110,21 @@ public:
 
     TypeTypeContext *typeType();
     antlr4::tree::TerminalNode *Identifier();
-    ExpressionContext *expression();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  DefConstContext : public VariableDefinitionContext {
+  public:
+    DefConstContext(VariableDefinitionContext *ctx);
+
+    antlr4::Token *lhs = nullptr;
+    TypeTypeContext *typeType();
+    antlr4::tree::TerminalNode *Identifier();
+    antlr4::tree::TerminalNode *CharLiteral();
+    antlr4::tree::TerminalNode *DecimalInteger();
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
 
@@ -123,7 +137,7 @@ public:
 
     TypeTypeContext *typeType();
     antlr4::tree::TerminalNode *Identifier();
-    ExpressionContext *expression();
+    antlr4::tree::TerminalNode *DecimalInteger();
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
 

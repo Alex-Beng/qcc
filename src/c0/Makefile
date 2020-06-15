@@ -5,8 +5,15 @@ GENERATED_FILES := C0BaseListener.o  C0Lexer.o  C0Parser.o  CLexer.o  C0Listener
 
 
 
-qcc : main.cpp irlisten.o symtable.o $(GENERATED_FILES)
-	$(CPP) $(GENERATED_FILES) irlisten.o symtable.o  main.cpp  $(FLAGS)  -o qcc
+qcc : main.cpp irlisten.o symtable.o ir.o $(GENERATED_FILES)
+	$(CPP) $(GENERATED_FILES) irlisten.o symtable.o ir.o main.cpp  $(FLAGS)  -o qcc
+
+clean :
+	rm *.o qcc
+
+
+ir.o : IR.cpp
+	$(CPP) IR.cpp $(FLAGS) -c -o ir.o
 
 irlisten.o : IRListener.cpp
 	$(CPP) IRListener.cpp $(FLAGS) -c -o irlisten.o
@@ -34,4 +41,3 @@ C0Listener.o : ./generated/C0Listener.cpp
 
 C0Visitor.o : ./generated/C0Visitor.cpp
 	$(CPP) ./generated/C0Visitor.cpp $(FLAGS) -c -o C0Visitor.o
-

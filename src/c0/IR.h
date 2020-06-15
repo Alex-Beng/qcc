@@ -70,7 +70,7 @@ public:
         str_cnt = 0;
     }
 
-    std::string gen_temp(std::string &curFunc, int &lc, int cls);
+    std::string gen_temp(std::string &curFunc, int &lc, int cls, SymbolTable& st);
 	std::string gen_label();
 	//std::string gen_str();
 

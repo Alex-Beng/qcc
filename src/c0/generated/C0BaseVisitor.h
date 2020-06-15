@@ -27,6 +27,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual antlrcpp::Any visitDefConst(C0Parser::DefConstContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual antlrcpp::Any visitDefArray(C0Parser::DefArrayContext *ctx) override {
     return visitChildren(ctx);
   }

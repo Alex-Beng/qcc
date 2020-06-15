@@ -23,6 +23,9 @@ public:
   virtual void enterDefVar(C0Parser::DefVarContext *ctx) = 0;
   virtual void exitDefVar(C0Parser::DefVarContext *ctx) = 0;
 
+  virtual void enterDefConst(C0Parser::DefConstContext *ctx) = 0;
+  virtual void exitDefConst(C0Parser::DefConstContext *ctx) = 0;
+
   virtual void enterDefArray(C0Parser::DefArrayContext *ctx) = 0;
   virtual void exitDefArray(C0Parser::DefArrayContext *ctx) = 0;
 

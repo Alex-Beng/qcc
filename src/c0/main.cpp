@@ -53,7 +53,14 @@ int main(int argc, char const *argv[]) {
 
     antlr4::tree::ParseTreeWalker walker;
     IRListener ir_listener;
-    walker.walk(&ir_listener, tree);
+    try {
+        walker.walk(&ir_listener, tree);
+    }
+    catch(const std::exception& e) {
+        std::cerr << e.what() << '\n';
+    }
+    
+    
 
     return 0;
 }

@@ -2,9 +2,9 @@
 #include "IR.h"
 
 std::string IR::gen_temp(std::string &curFunc, int &lc, int cls, SymbolTable& st) {
-    assert(cls == cls_int || cls == cls_char);
+    assert(cls == CLS_INT || cls == CLS_CHAR);
     auto name = OP::TEMP_VAR_HEAD + std::to_string(++temp_var_cnt);
-    st.addSym(currFunc, name, cls, type_var, 0, lc);
+    st.addSym(curFunc, name, cls, TYPE_VAR, 0, lc);
 }
 
 
@@ -22,7 +22,7 @@ void IR::addIMC(std::string rst, const std::string &op, std::string op1, std::st
     this->ir_codes.push_back(t);
 }
 
-void printIMC(std::ofstream&o) {
+void IR::printIMC(std::ofstream&o) {
 	for(auto iter = ir_codes.begin(); iter!= ir_codes.end(); iter++) {
 		o << std::right;
 		o << std::setw(14) << iter->rst << "  " << std::setw(10) << iter->op << "  "

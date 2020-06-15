@@ -25,6 +25,9 @@ public:
   virtual void enterDefVar(C0Parser::DefVarContext * /*ctx*/) override { }
   virtual void exitDefVar(C0Parser::DefVarContext * /*ctx*/) override { }
 
+  virtual void enterDefConst(C0Parser::DefConstContext * /*ctx*/) override { }
+  virtual void exitDefConst(C0Parser::DefConstContext * /*ctx*/) override { }
+
   virtual void enterDefArray(C0Parser::DefArrayContext * /*ctx*/) override { }
   virtual void exitDefArray(C0Parser::DefArrayContext * /*ctx*/) override { }
 

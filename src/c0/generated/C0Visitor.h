@@ -25,6 +25,8 @@ public:
 
     virtual antlrcpp::Any visitDefVar(C0Parser::DefVarContext *context) = 0;
 
+    virtual antlrcpp::Any visitDefConst(C0Parser::DefConstContext *context) = 0;
+
     virtual antlrcpp::Any visitDefArray(C0Parser::DefArrayContext *context) = 0;
 
     virtual antlrcpp::Any visitParameter(C0Parser::ParameterContext *context) = 0;
