@@ -18,15 +18,14 @@ public:
     T__20 = 21, T__21 = 22, T__22 = 23, T__23 = 24, T__24 = 25, T__25 = 26, 
     T__26 = 27, T__27 = 28, T__28 = 29, T__29 = 30, T__30 = 31, T__31 = 32, 
     T__32 = 33, T__33 = 34, T__34 = 35, T__35 = 36, T__36 = 37, T__37 = 38, 
-    T__38 = 39, T__39 = 40, T__40 = 41, T__41 = 42, T__42 = 43, CharLiteral = 44, 
-    StringLiteral = 45, Identifier = 46, DecimalInteger = 47, WS = 48, BLOCK_COMMENT = 49, 
-    LINE_COMMENT = 50
+    T__38 = 39, T__39 = 40, T__40 = 41, CharLiteral = 42, StringLiteral = 43, 
+    Identifier = 44, DecimalInteger = 45, WS = 46, BLOCK_COMMENT = 47, LINE_COMMENT = 48
   };
 
   enum {
     RuleCompilationUnit = 0, RuleFunctionDefinition = 1, RuleVariableDefinition = 2, 
     RuleParameter = 3, RuleTypeType = 4, RuleBlock = 5, RuleStatement = 6, 
-    RuleExpressionList = 7, RuleExpression = 8, RulePrimary = 9, RuleLiteral = 10
+    RuleExpressionList = 7, RuleExpression = 8, RulePrimary = 9
   };
 
   C0Parser(antlr4::TokenStream *input);
@@ -48,8 +47,7 @@ public:
   class StatementContext;
   class ExpressionListContext;
   class ExpressionContext;
-  class PrimaryContext;
-  class LiteralContext; 
+  class PrimaryContext; 
 
   class  CompilationUnitContext : public antlr4::ParserRuleContext {
   public:
@@ -423,18 +421,6 @@ public:
     virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
-  class  SuffixExprContext : public ExpressionContext {
-  public:
-    SuffixExprContext(ExpressionContext *ctx);
-
-    antlr4::Token *op = nullptr;
-    ExpressionContext *expression();
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
   class  BinaryExprContext : public ExpressionContext {
   public:
     BinaryExprContext(ExpressionContext *ctx);
@@ -490,7 +476,10 @@ public:
   public:
     LiteralExprContext(PrimaryContext *ctx);
 
-    LiteralContext *literal();
+    antlr4::Token *lite = nullptr;
+    antlr4::tree::TerminalNode *DecimalInteger();
+    antlr4::tree::TerminalNode *CharLiteral();
+    antlr4::tree::TerminalNode *StringLiteral();
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
 
@@ -509,54 +498,6 @@ public:
   };
 
   PrimaryContext* primary();
-
-  class  LiteralContext : public antlr4::ParserRuleContext {
-  public:
-    LiteralContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-   
-    LiteralContext() = default;
-    void copyFrom(LiteralContext *context);
-    using antlr4::ParserRuleContext::copyFrom;
-
-    virtual size_t getRuleIndex() const override;
-
-   
-  };
-
-  class  CharConstContext : public LiteralContext {
-  public:
-    CharConstContext(LiteralContext *ctx);
-
-    antlr4::tree::TerminalNode *CharLiteral();
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  DecIntegerConstContext : public LiteralContext {
-  public:
-    DecIntegerConstContext(LiteralContext *ctx);
-
-    antlr4::tree::TerminalNode *DecimalInteger();
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  StringConstContext : public LiteralContext {
-  public:
-    StringConstContext(LiteralContext *ctx);
-
-    antlr4::tree::TerminalNode *StringLiteral();
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  LiteralContext* literal();
 
 
   virtual bool sempred(antlr4::RuleContext *_localctx, size_t ruleIndex, size_t predicateIndex) override;

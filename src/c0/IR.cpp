@@ -1,10 +1,11 @@
 #include "IRListener.h"
 #include "IR.h"
 
-std::string IR::gen_temp(std::string &curFunc, int &lc, int cls, SymbolTable& st) {
+std::string IR::gen_temp(std::string &curFunc, int lc, int cls, SymbolTable& st) {
     assert(cls == CLS_INT || cls == CLS_CHAR);
     auto name = OP::TEMP_VAR_HEAD + std::to_string(++temp_var_cnt);
     st.addSym(curFunc, name, cls, TYPE_VAR, 0, lc);
+	return name;
 }
 
 

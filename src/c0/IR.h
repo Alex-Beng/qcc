@@ -22,6 +22,9 @@ namespace OP {
 	constexpr auto DIV = "/";	// if *2 /2 use << >>
     constexpr auto MOD = "%"; 
 
+	constexpr auto SFL = "<<";
+	constexpr auto SFR = ">>";
+
     constexpr auto BAND = "&";
     constexpr auto BOR = "|";
     constexpr auto BXOR = "^";
@@ -51,8 +54,6 @@ namespace OP {
 
     /* temporary var head, #1, #2, ... */
 	constexpr auto TEMP_VAR_HEAD = "#";
-	/* std::string head, ~xxx, ~sakura, ~19260817 */
-	constexpr auto STR_HEAD = "~";
 	/* label head, %1, %2, ... */
 	constexpr auto LABEL_HEAD = "%";
 }
@@ -70,7 +71,7 @@ public:
         str_cnt = 0;
     }
 
-    std::string gen_temp(std::string &curFunc, int &lc, int cls, SymbolTable& st);
+    std::string gen_temp(std::string &curFunc, int lc, int cls, SymbolTable& st);
 	std::string gen_label();
 	//std::string gen_str();
 

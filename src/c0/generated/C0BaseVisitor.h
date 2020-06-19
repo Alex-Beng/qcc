@@ -115,10 +115,6 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitSuffixExpr(C0Parser::SuffixExprContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
   virtual antlrcpp::Any visitBinaryExpr(C0Parser::BinaryExprContext *ctx) override {
     return visitChildren(ctx);
   }
@@ -136,18 +132,6 @@ public:
   }
 
   virtual antlrcpp::Any visitLiteralExpr(C0Parser::LiteralExprContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitDecIntegerConst(C0Parser::DecIntegerConstContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitCharConst(C0Parser::CharConstContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitStringConst(C0Parser::StringConstContext *ctx) override {
     return visitChildren(ctx);
   }
 

@@ -49,8 +49,7 @@ expression
     : primary                                            # primaryExpr
     | expression '[' expression ']'                      # arefExpr
     | expression '(' expressionList? ')'                 # funcallExpr
-    | expression op=('++' | '--')                        # suffixExpr
-    | op=('+' | '-' | '++' | '--') expression            # prefixExpr
+    | op=('+' | '-') expression                          # prefixExpr
     | op=('~' | '!' ) expression                         # prefixExpr
     | expression op=('*' | '/' | '%') expression         # binaryExpr
     | expression op=('+' | '-') expression               # binaryExpr
@@ -68,14 +67,15 @@ expression
 primary
     : '(' expression ')'   # subExpr
     | Identifier           # variableExpr
-    | literal              # literalExpr
+    | lite=(DecimalInteger|CharLiteral|StringLiteral)              # literalExpr
     ;
 
-literal
-    : DecimalInteger          # DecIntegerConst
-    | CharLiteral             # CharConst
-    | StringLiteral           # StringConst
-    ;
+// literal
+    // : DecimalInteger          # DecIntegerConst
+    // | CharLiteral             # CharConst
+    // | StringLiteral           # StringConst
+    // : 
+    // ;
 
 CharLiteral
     : '\'' Character '\''

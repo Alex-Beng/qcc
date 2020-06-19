@@ -69,8 +69,6 @@ public:
 
     virtual antlrcpp::Any visitArefExpr(C0Parser::ArefExprContext *context) = 0;
 
-    virtual antlrcpp::Any visitSuffixExpr(C0Parser::SuffixExprContext *context) = 0;
-
     virtual antlrcpp::Any visitBinaryExpr(C0Parser::BinaryExprContext *context) = 0;
 
     virtual antlrcpp::Any visitAssignExpr(C0Parser::AssignExprContext *context) = 0;
@@ -80,12 +78,6 @@ public:
     virtual antlrcpp::Any visitVariableExpr(C0Parser::VariableExprContext *context) = 0;
 
     virtual antlrcpp::Any visitLiteralExpr(C0Parser::LiteralExprContext *context) = 0;
-
-    virtual antlrcpp::Any visitDecIntegerConst(C0Parser::DecIntegerConstContext *context) = 0;
-
-    virtual antlrcpp::Any visitCharConst(C0Parser::CharConstContext *context) = 0;
-
-    virtual antlrcpp::Any visitStringConst(C0Parser::StringConstContext *context) = 0;
 
 
 };

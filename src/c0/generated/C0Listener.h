@@ -89,9 +89,6 @@ public:
   virtual void enterArefExpr(C0Parser::ArefExprContext *ctx) = 0;
   virtual void exitArefExpr(C0Parser::ArefExprContext *ctx) = 0;
 
-  virtual void enterSuffixExpr(C0Parser::SuffixExprContext *ctx) = 0;
-  virtual void exitSuffixExpr(C0Parser::SuffixExprContext *ctx) = 0;
-
   virtual void enterBinaryExpr(C0Parser::BinaryExprContext *ctx) = 0;
   virtual void exitBinaryExpr(C0Parser::BinaryExprContext *ctx) = 0;
 
@@ -106,15 +103,6 @@ public:
 
   virtual void enterLiteralExpr(C0Parser::LiteralExprContext *ctx) = 0;
   virtual void exitLiteralExpr(C0Parser::LiteralExprContext *ctx) = 0;
-
-  virtual void enterDecIntegerConst(C0Parser::DecIntegerConstContext *ctx) = 0;
-  virtual void exitDecIntegerConst(C0Parser::DecIntegerConstContext *ctx) = 0;
-
-  virtual void enterCharConst(C0Parser::CharConstContext *ctx) = 0;
-  virtual void exitCharConst(C0Parser::CharConstContext *ctx) = 0;
-
-  virtual void enterStringConst(C0Parser::StringConstContext *ctx) = 0;
-  virtual void exitStringConst(C0Parser::StringConstContext *ctx) = 0;
 
 
 };
