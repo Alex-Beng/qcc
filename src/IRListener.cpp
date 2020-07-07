@@ -178,10 +178,6 @@ void IRListener::enterDefArray(C0Parser::DefArrayContext * ctx) {
 }
 
 void IRListener::exitAssignExpr(C0Parser::AssignExprContext * ctx) {
-    // auto t_lhs = temp_var.get(ctx->expression()[0]);
-    // auto t_lhs_idx = temp_idx.get(ctx->expression()[0]);
-    // std::cout<<t_lhs<<' '<<t_lhs_idx<<'\n';
-
 
     // check lhs (must be iden/array)
     auto lhs = temp_var.get(ctx->expression()[0]);
@@ -273,7 +269,7 @@ void IRListener::exitBinaryExpr(C0Parser::BinaryExprContext * ctx) {
     auto rhs = temp_var.get(ctx->expression()[1]);
     auto rhs_varinfo = sym_table.lookup(curr_func, rhs, false);
 
-    std::cout<<lhs<<' '<<rhs<<'\n';
+    // std::cout<<lhs<<' '<<rhs<<'\n';
 
     if (lhs_varinfo && lhs_varinfo->type == TYPE_ARRAY) {
         auto t_v = ir.gen_temp(curr_func, ctx->getStart()->getLine(), CLS_INT, sym_table);

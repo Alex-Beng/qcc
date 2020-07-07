@@ -7,6 +7,11 @@ int main(int argc, char const *argv[]) {
     d[1]++;
     d[1]--;
     int e = ++d[1];
-    printf("%d", d[1]);
+    // printf("%d", d[1]);
+
+    if (-1 || 0) {
+        printf("ya");
+    }
+    
     return 0;
 }
