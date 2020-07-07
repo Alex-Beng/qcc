@@ -15,9 +15,12 @@ public:
 	IR ir;
 
 	// 当前所在的func, ""为global
+	// 在函数定义中
 	std::string curr_func;
+	bool in_func;
 	
-	// 递归求表达式值时，每一节点临时变量
+	// 每一节点临时变量类型和名字
+	antlr4::tree::ParseTreeProperty<int> temp_cls;
 	antlr4::tree::ParseTreeProperty<std::string> temp_var;
 
 	// 临时变量为array时的idx
@@ -26,6 +29,8 @@ public:
 public:
 	IRListener() {
 		curr_func = "";
+		in_func = false;
+
 		sym_table.addSym("", "true", CLS_INT, TYPE_CONST, 1, 0);
 		sym_table.addSym("", "false", CLS_INT, TYPE_CONST, 0, 0);
 	}
@@ -55,6 +60,9 @@ public:
 	void exitBinaryExpr(C0Parser::BinaryExprContext * /*ctx*/);
 
   	void exitAssignExpr(C0Parser::AssignExprContext * /*ctx*/);
+
+	void enterIfStmt(C0Parser::IfStmtContext * /*ctx*/);
+  	void exitIfStmt(C0Parser::IfStmtContext * /*ctx*/);
 
 };
 

@@ -73,17 +73,11 @@ public:
   virtual void enterExpressionList(C0Parser::ExpressionListContext * /*ctx*/) override { }
   virtual void exitExpressionList(C0Parser::ExpressionListContext * /*ctx*/) override { }
 
-  virtual void enterLogicalOrExpr(C0Parser::LogicalOrExprContext * /*ctx*/) override { }
-  virtual void exitLogicalOrExpr(C0Parser::LogicalOrExprContext * /*ctx*/) override { }
-
   virtual void enterPrefixExpr(C0Parser::PrefixExprContext * /*ctx*/) override { }
   virtual void exitPrefixExpr(C0Parser::PrefixExprContext * /*ctx*/) override { }
 
   virtual void enterPrimaryExpr(C0Parser::PrimaryExprContext * /*ctx*/) override { }
   virtual void exitPrimaryExpr(C0Parser::PrimaryExprContext * /*ctx*/) override { }
-
-  virtual void enterLogicalAndExpr(C0Parser::LogicalAndExprContext * /*ctx*/) override { }
-  virtual void exitLogicalAndExpr(C0Parser::LogicalAndExprContext * /*ctx*/) override { }
 
   virtual void enterFuncallExpr(C0Parser::FuncallExprContext * /*ctx*/) override { }
   virtual void exitFuncallExpr(C0Parser::FuncallExprContext * /*ctx*/) override { }

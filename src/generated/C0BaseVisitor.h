@@ -91,19 +91,11 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitLogicalOrExpr(C0Parser::LogicalOrExprContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
   virtual antlrcpp::Any visitPrefixExpr(C0Parser::PrefixExprContext *ctx) override {
     return visitChildren(ctx);
   }
 
   virtual antlrcpp::Any visitPrimaryExpr(C0Parser::PrimaryExprContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitLogicalAndExpr(C0Parser::LogicalAndExprContext *ctx) override {
     return visitChildren(ctx);
   }
 

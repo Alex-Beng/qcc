@@ -11,7 +11,7 @@ functionDefinition
 
 variableDefinition
     : typeType Identifier ';'                           #defVar
-    | typeType Identifier ('=' lhs=(CharLiteral|DecimalInteger))? ';'         #defConst
+    | typeType Identifier ('=' rhs=(CharLiteral|DecimalInteger))? ';'         #defConst
     | typeType Identifier '[' DecimalInteger ']' ';'    #defArray
     ;
 
@@ -51,16 +51,10 @@ expression
     | expression '(' expressionList? ')'                 # funcallExpr
     | op=('+' | '-') expression                          # prefixExpr
     | op=('~' | '!' ) expression                         # prefixExpr
-    | expression op=('*' | '/' | '%') expression         # binaryExpr
+    | expression op=('*' | '/') expression               # binaryExpr
     | expression op=('+' | '-') expression               # binaryExpr
-    | expression op=('<<' | '>>') expression             # binaryExpr
     | expression op=('<' | '>' | '>=' | '<=') expression # binaryExpr
     | expression op=('==' | '!=' ) expression            # binaryExpr
-    | expression op='&' expression                       # binaryExpr
-    | expression op='^' expression                       # binaryExpr
-    | expression op='|' expression                       # binaryExpr
-    | expression '&&' expression                         # logicalAndExpr
-    | expression '||' expression                         # logicalOrExpr
     | <assoc=right> expression '=' expression            # assignExpr // 指定右结合
     ;
 

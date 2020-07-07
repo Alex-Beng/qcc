@@ -57,13 +57,9 @@ public:
 
     virtual antlrcpp::Any visitExpressionList(C0Parser::ExpressionListContext *context) = 0;
 
-    virtual antlrcpp::Any visitLogicalOrExpr(C0Parser::LogicalOrExprContext *context) = 0;
-
     virtual antlrcpp::Any visitPrefixExpr(C0Parser::PrefixExprContext *context) = 0;
 
     virtual antlrcpp::Any visitPrimaryExpr(C0Parser::PrimaryExprContext *context) = 0;
-
-    virtual antlrcpp::Any visitLogicalAndExpr(C0Parser::LogicalAndExprContext *context) = 0;
 
     virtual antlrcpp::Any visitFuncallExpr(C0Parser::FuncallExprContext *context) = 0;
 

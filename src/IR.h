@@ -20,14 +20,6 @@ namespace OP {
 	constexpr auto SUB = "-";
 	constexpr auto MUL = "*";	// mfhi, mflo
 	constexpr auto DIV = "/";	// if *2 /2 use << >>
-    constexpr auto MOD = "%"; 
-
-	constexpr auto SFL = "<<";
-	constexpr auto SFR = ">>";
-
-    constexpr auto BAND = "&";
-    constexpr auto BOR = "|";
-    constexpr auto BXOR = "^";
 
 	constexpr auto EQU = "==";	// stl...
 	constexpr auto NEQ = "!=";
@@ -54,6 +46,8 @@ namespace OP {
 
     /* temporary var head, #1, #2, ... */
 	constexpr auto TEMP_VAR_HEAD = "#";
+	/* string head, ~xxx, ~sakura, ~19260817 */
+	constexpr auto STR_HEAD = "~";
 	/* label head, %1, %2, ... */
 	constexpr auto LABEL_HEAD = "%";
 }

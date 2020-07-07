@@ -3,7 +3,7 @@
 
 #include "common_headers.h"
 
-enum {CLS_INT, CLS_CHAR, CLS_VOID};
+enum {CLS_INT, CLS_CHAR, CLS_VOID, CLS_STR};
 enum {TYPE_CONST, TYPE_VAR, TYPE_ARRAY, TYPE_FUNC, TYPE_PARAM};
 
 // 变量信息

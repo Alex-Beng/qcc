@@ -71,17 +71,11 @@ public:
   virtual void enterExpressionList(C0Parser::ExpressionListContext *ctx) = 0;
   virtual void exitExpressionList(C0Parser::ExpressionListContext *ctx) = 0;
 
-  virtual void enterLogicalOrExpr(C0Parser::LogicalOrExprContext *ctx) = 0;
-  virtual void exitLogicalOrExpr(C0Parser::LogicalOrExprContext *ctx) = 0;
-
   virtual void enterPrefixExpr(C0Parser::PrefixExprContext *ctx) = 0;
   virtual void exitPrefixExpr(C0Parser::PrefixExprContext *ctx) = 0;
 
   virtual void enterPrimaryExpr(C0Parser::PrimaryExprContext *ctx) = 0;
   virtual void exitPrimaryExpr(C0Parser::PrimaryExprContext *ctx) = 0;
-
-  virtual void enterLogicalAndExpr(C0Parser::LogicalAndExprContext *ctx) = 0;
-  virtual void exitLogicalAndExpr(C0Parser::LogicalAndExprContext *ctx) = 0;
 
   virtual void enterFuncallExpr(C0Parser::FuncallExprContext *ctx) = 0;
   virtual void exitFuncallExpr(C0Parser::FuncallExprContext *ctx) = 0;

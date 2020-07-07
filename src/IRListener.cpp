@@ -44,6 +44,7 @@ void IRListener::enterFunctionDefinition(C0Parser::FunctionDefinitionContext* ct
     }
 
     this->curr_func = func_name;
+    in_func = true;
     ir.addIMC(func_name, OP::FUNC_BEGIN, "0", "0");
     
     // add param to sym table
@@ -76,8 +77,9 @@ void IRListener::exitFunctionDefinition(C0Parser::FunctionDefinitionContext* ctx
 #ifdef DEBUG
     printf("leaving func %s \n", this->curr_func.c_str());
 #endif
-    ir.addIMC(curr_func, OP::FUNC_END, "0", "0");
+    ir.addIMC("0", OP::FUNC_END, "0", "0");
     this->curr_func = "";
+    in_func = false;
 }
 
 
@@ -102,10 +104,10 @@ void IRListener::enterDefConst(C0Parser::DefConstContext * ctx) {
     }
 
     // get rhs
-    if (ctx->lhs->getType() == C0Lexer::DecimalInteger) {
+    if (ctx->rhs->getType() == C0Lexer::DecimalInteger) {
         var_val = std::stoi(ctx->DecimalInteger()->getText());
     }
-    else if(ctx->lhs->getType() == C0Lexer::CharLiteral) {
+    else if(ctx->rhs->getType() == C0Lexer::CharLiteral) {
         var_val = ctx->CharLiteral()->getText()[1];
     }
 
@@ -132,7 +134,7 @@ void IRListener::enterDefVar(C0Parser::DefVarContext * ctx) {
         throw std::runtime_error("unexpect void type at line: "+std::to_string(ctx->getStart()->getLine()));
     }
     else { // "const xxx"
-        throw std::runtime_error("const must have LHS expression at line: "+std::to_string(ctx->getStart()->getLine()));
+        throw std::runtime_error("const must have RHS expression at line: "+std::to_string(ctx->getStart()->getLine()));
     }
 
     if (sym_table.lookup(curr_func, var_name, true) == nullptr)
@@ -165,8 +167,8 @@ void IRListener::enterDefArray(C0Parser::DefArrayContext * ctx) {
     }
     array_len = std::stoi(ctx->DecimalInteger()->getText());
     
-    if (array_len == 0) {
-        throw std::runtime_error("unexpect array len 0 at line: "+std::to_string(ctx->getStart()->getLine()));
+    if (array_len <= 0) {
+        throw std::runtime_error("unexpect array len <=0 at line: "+std::to_string(ctx->getStart()->getLine()));
     }
 
     if (sym_table.lookup(curr_func, var_name, true) == nullptr)
@@ -178,7 +180,6 @@ void IRListener::enterDefArray(C0Parser::DefArrayContext * ctx) {
 }
 
 void IRListener::exitAssignExpr(C0Parser::AssignExprContext * ctx) {
-
     // check lhs (must be iden/array)
     auto lhs = temp_var.get(ctx->expression()[0]);
     auto lhs_varinfo = sym_table.lookup(curr_func, lhs, false);
@@ -196,11 +197,14 @@ void IRListener::exitAssignExpr(C0Parser::AssignExprContext * ctx) {
     if (rhs_varinfo && 
     (rhs_varinfo->type == TYPE_ARRAY || rhs_varinfo->type == TYPE_VAR || rhs_varinfo->type == TYPE_PARAM)) {
         if (rhs_varinfo->type == TYPE_ARRAY) {
-            auto t_v = ir.gen_temp(curr_func, ctx->getStop()->getLine(), CLS_INT, sym_table);
+            auto t_v = ir.gen_temp(curr_func, ctx->getStop()->getLine(), rhs_varinfo->cls, sym_table);
             auto t_idx = temp_idx.get(ctx->expression()[1]);
             ir.addIMC(t_v, OP::READ_ARR, rhs, t_idx);
             rhs = t_v;
         }
+    }
+    else if (rhs_varinfo==NULL) { // 字面量
+        ;
     }
     else {
         throw std::runtime_error("rhs must have been defined or a variable at line: "+std::to_string(ctx->getStart()->getLine()));
@@ -217,24 +221,31 @@ void IRListener::exitAssignExpr(C0Parser::AssignExprContext * ctx) {
 }
 
 void IRListener::exitPrimaryExpr(C0Parser::PrimaryExprContext * ctx) {
+    auto child_type = temp_cls.get(ctx->children[0]);
     auto child_var = temp_var.get(ctx->children[0]);
-    // std::cout<<ctx->getText()<<child_var<<'\n';
+
+    temp_cls.put(ctx, child_type);
     temp_var.put(ctx, child_var);
 }
 
 void IRListener::exitLiteralExpr(C0Parser::LiteralExprContext * ctx) {
     if (ctx->lite->getType() == C0Lexer::DecimalInteger) {
+        temp_cls.put(ctx, CLS_INT);
         temp_var.put(ctx, ctx->DecimalInteger()->getText());
     }
     else if (ctx->lite->getType() == C0Lexer::CharLiteral) {
         int var_val = ctx->CharLiteral()->getText()[1];
+
+        temp_cls.put(ctx, CLS_CHAR);
         temp_var.put(ctx, std::to_string(var_val));
     }
     else if (ctx->lite->getType() == C0Lexer::StringLiteral){
         // add to sym table
         std::string ts = ctx->StringLiteral()->getText();
         int str_idx = sym_table.addStr(ts);
-        temp_var.put(ctx, "*"+std::to_string(str_idx));
+
+        temp_cls.put(ctx, CLS_STR);
+        temp_var.put(ctx, std::to_string(str_idx));
     }
 }
 
@@ -246,13 +257,12 @@ void IRListener::exitVariableExpr(C0Parser::VariableExprContext * ctx) {
         throw std::runtime_error("can't find defination of "+ctx->Identifier()->getText()+" at line: "+std::to_string(ctx->getStart()->getLine()));
     }
 
-    if (t_varinfo->type == TYPE_CONST) {
-        temp_var.put(ctx, std::to_string(t_varinfo->length));
-    }
-    else if (t_varinfo->type == TYPE_PARAM || t_varinfo->type == TYPE_VAR) {
-        temp_var.put(ctx, t_varinfo->name);
-    }
-    else if (t_varinfo->type == TYPE_ARRAY) {
+    if (    t_varinfo->type == TYPE_CONST
+        ||  t_varinfo->type == TYPE_PARAM 
+        ||  t_varinfo->type == TYPE_VAR 
+        ||  t_varinfo->type == TYPE_ARRAY) {
+        
+        temp_cls.put(ctx, t_varinfo->cls);
         temp_var.put(ctx, t_varinfo->name);
     }
     else {
@@ -262,7 +272,6 @@ void IRListener::exitVariableExpr(C0Parser::VariableExprContext * ctx) {
 
 void IRListener::exitBinaryExpr(C0Parser::BinaryExprContext * ctx) {
     // check lhs (must be iden)
-    // auto lhs = ctx->expression()[0];
     auto lhs = temp_var.get(ctx->expression()[0]);
     auto lhs_varinfo = sym_table.lookup(curr_func, lhs, false);
 
@@ -284,89 +293,89 @@ void IRListener::exitBinaryExpr(C0Parser::BinaryExprContext * ctx) {
         rhs = t_v;
     }
 
+    if (lhs_varinfo == NULL && rhs_varinfo == NULL) {// $$两个都是字面量，直接计算
+        ;
+    }
+
     int cls = CLS_INT;
     auto t_v = ir.gen_temp(curr_func, ctx->getStart()->getLine(), cls, sym_table);
 
     temp_var.put(ctx, t_v);
     auto op = ctx->op->getText();
-    //　我滴老天鹅，你g4白写了？
-    // if (
-    //     op == "*" ||
-    //     op == "/" ||
-    //     op == "%" ||
-    //     op == "+" ||
-    //     op == "-" ||
-    //     op == "<<" ||
-    //     op == ">>" ||
-    //     op == "<" ||
-    //     op == ">" ||
-    //     op == ">=" ||
-    //     op == "<=" ||
-    //     op == "==" ||
-    //     op == "!=" ||
-    //     op == "&" ||
-    //     op == "^" ||
-    //     op == "|" 
-    // ) {
+
+    if (    op == "*"
+        ||  op == "/"
+        ||  op == "+"
+        ||  op == "-") 
         ir.addIMC(t_v, op, lhs, rhs);
-    // }
+    else {// $$需要label跳转
+        ;
+    }
 
 }
 
 void IRListener::exitPrefixExpr(C0Parser::PrefixExprContext * ctx) {
+    auto object_cls = temp_cls.get(ctx->expression());
     auto object = temp_var.get(ctx->expression());
     auto t_varinfo = sym_table.lookup(curr_func, object, false);
-
     auto op = ctx->op->getText();
 
-    if (t_varinfo->type == TYPE_ARRAY) {
-        auto t_idx = temp_idx.get(ctx->expression());
-        auto t_v = ir.gen_temp(curr_func, ctx->getStart()->getLine(), CLS_INT, sym_table);
-
-        ir.addIMC(t_v, OP::READ_ARR, t_varinfo->name, t_idx);
-        object = t_v;
-    }
-
-    temp_var.put(ctx, object);
-
+    // 前缀操作后必然是int
+    temp_cls.put(ctx, CLS_INT);
     
+    if (t_varinfo == NULL) { // 可能为字面量，字面量不在符号表
+        printf(object.c_str());
+        if (op == "+") {
+            
+            temp_var.put(ctx, object);
+        }
+        else if (op == "-") {
+            auto t_v = ir.gen_temp(curr_func, ctx->getStart()->getLine(), object_cls, sym_table);
+            ir.addIMC(t_v, OP::SUB, "0", object);
 
-    if (op == "++") {
-        ir.addIMC(object, OP::ADD, object, "1");
+            temp_var.put(ctx, t_v);
+        }
     }
-    else if (op == "--") {
-        ir.addIMC(object, OP::SUB, object, "1");
-    }
-    else if (op == "+") {
-        ;
-    }
-    else if (op == "-") {
-        ir.addIMC(object, OP::SUB, "0", object);
-    }
-    else if (op == "~") {// 按位取反==(11...11) xor object
-        ir.addIMC(object, OP::BXOR, "-1", object);
-    }
-    else if (op == "!") {
-        ir.addIMC(object, OP::EQU, "0", object);
+    else {   
+        if (t_varinfo->type == TYPE_ARRAY) {
+            auto t_idx = temp_idx.get(ctx->expression());
+            auto t_v = ir.gen_temp(curr_func, ctx->getStart()->getLine(), CLS_INT, sym_table);
+
+            ir.addIMC(t_v, OP::READ_ARR, t_varinfo->name, t_idx);
+            object = t_v;
+        }
+
+        if (op == "+") {
+            temp_var.put(ctx, object);
+        }
+        else if (op == "-") {
+            ir.addIMC(object, OP::SUB, "0", object);
+
+            temp_var.put(ctx, object);
+        }
     }
 }
 
 void IRListener::exitSubExpr(C0Parser::SubExprContext * ctx) {
-    auto t_v = temp_var.get(ctx->expression());
+    auto t_type = temp_cls.get(ctx->expression());
+    auto t_var = temp_var.get(ctx->expression());
     auto t_idx = temp_idx.get(ctx->expression());
-    temp_var.put(ctx, t_v);
+
+    temp_cls.put(ctx, t_type);
+    temp_var.put(ctx, t_var);
     temp_idx.put(ctx, t_idx);
 }
 
 void IRListener::exitArefExpr(C0Parser::ArefExprContext * ctx) {
     std::string array_name = ctx->expression()[0]->getText();
+
     auto t_varinfo = sym_table.lookup(curr_func, array_name, false);
     if (t_varinfo->type != TYPE_ARRAY) {
         throw std::runtime_error("expect array type at line: "+std::to_string(ctx->getStart()->getLine()));
     }
 
     auto array_idx = temp_var.get(ctx->expression()[1]);
-    // std::cout<<array_idx<<'\n';
+
     auto tt_varinfo = sym_table.lookup(curr_func, array_idx, false);
     // 如果遇到嵌套，先求值
     if (tt_varinfo && tt_varinfo->type == TYPE_ARRAY) {
@@ -376,6 +385,15 @@ void IRListener::exitArefExpr(C0Parser::ArefExprContext * ctx) {
         array_idx = t_v;
     }    
 
+    temp_cls.put(ctx, t_varinfo->cls);
     temp_var.put(ctx, array_name);
     temp_idx.put(ctx, array_idx);
+}
+
+void IRListener::enterIfStmt(C0Parser::IfStmtContext * ctx) {
+    std::string lable1 = ir.gen_label();
+
+}
+void IRListener::exitIfStmt(C0Parser::IfStmtContext * ctx) {
+
 }
