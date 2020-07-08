@@ -149,6 +149,18 @@ public interface C0Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitElseStatement(C0Parser.ElseStatementContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link C0Parser#whileCondition}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitWhileCondition(C0Parser.WhileConditionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link C0Parser#whileStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitWhileStatement(C0Parser.WhileStatementContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link C0Parser#expressionList}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

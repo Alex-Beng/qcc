@@ -99,6 +99,14 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual antlrcpp::Any visitWhileCondition(C0Parser::WhileConditionContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitWhileStatement(C0Parser::WhileStatementContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual antlrcpp::Any visitExpressionList(C0Parser::ExpressionListContext *ctx) override {
     return visitChildren(ctx);
   }

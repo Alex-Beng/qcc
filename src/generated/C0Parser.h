@@ -24,8 +24,9 @@ public:
   enum {
     RuleCompilationUnit = 0, RuleFunctionDefinition = 1, RuleVariableDefinition = 2, 
     RuleParameter = 3, RuleTypeType = 4, RuleBlock = 5, RuleStatement = 6, 
-    RuleIfCondition = 7, RuleIfStatement = 8, RuleElseStatement = 9, RuleExpressionList = 10, 
-    RuleExpression = 11, RulePrimary = 12
+    RuleIfCondition = 7, RuleIfStatement = 8, RuleElseStatement = 9, RuleWhileCondition = 10, 
+    RuleWhileStatement = 11, RuleExpressionList = 12, RuleExpression = 13, 
+    RulePrimary = 14
   };
 
   C0Parser(antlr4::TokenStream *input);
@@ -48,6 +49,8 @@ public:
   class IfConditionContext;
   class IfStatementContext;
   class ElseStatementContext;
+  class WhileConditionContext;
+  class WhileStatementContext;
   class ExpressionListContext;
   class ExpressionContext;
   class PrimaryContext; 
@@ -259,8 +262,8 @@ public:
   public:
     WhileStmtContext(StatementContext *ctx);
 
-    ExpressionContext *expression();
-    StatementContext *statement();
+    WhileConditionContext *whileCondition();
+    WhileStatementContext *whileStatement();
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
 
@@ -368,6 +371,36 @@ public:
   };
 
   ElseStatementContext* elseStatement();
+
+  class  WhileConditionContext : public antlr4::ParserRuleContext {
+  public:
+    WhileConditionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    ExpressionContext *expression();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  WhileConditionContext* whileCondition();
+
+  class  WhileStatementContext : public antlr4::ParserRuleContext {
+  public:
+    WhileStatementContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    StatementContext *statement();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  WhileStatementContext* whileStatement();
 
   class  ExpressionListContext : public antlr4::ParserRuleContext {
   public:

@@ -29,6 +29,8 @@ public:
 	// if语句用到的label
 	antlr4::tree::ParseTreeProperty<std::vector<std::string>> if_labels;
 
+	// while语句用到的label
+	antlr4::tree::ParseTreeProperty<std::vector<std::string>> while_labels;
 
 public:
 	IRListener() {
@@ -71,6 +73,11 @@ public:
   	void exitIfCondition(C0Parser::IfConditionContext * /*ctx*/);
 
 	void enterElseStatement(C0Parser::ElseStatementContext * /*ctx*/);
+
+  	void enterWhileStmt(C0Parser::WhileStmtContext * /*ctx*/);
+  	void exitWhileStmt(C0Parser::WhileStmtContext * /*ctx*/);
+
+	void exitWhileCondition(C0Parser::WhileConditionContext * /*ctx*/);
 
 };
 

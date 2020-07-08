@@ -256,18 +256,9 @@ void IRListener::exitVariableExpr(C0Parser::VariableExprContext * ctx) {
     if (t_varinfo == nullptr) {
         throw std::runtime_error("can't find defination of "+ctx->Identifier()->getText()+" at line: "+std::to_string(ctx->getStart()->getLine()));
     }
-
-    if (    t_varinfo->type == TYPE_CONST
-        ||  t_varinfo->type == TYPE_PARAM 
-        ||  t_varinfo->type == TYPE_VAR 
-        ||  t_varinfo->type == TYPE_ARRAY) {
         
-        temp_cls.put(ctx, t_varinfo->cls);
-        temp_var.put(ctx, t_varinfo->name);
-    }
-    else {
-        throw std::runtime_error("invalid identifier "+ctx->Identifier()->getText()+" at line: "+std::to_string(ctx->getStart()->getLine()));
-    }
+    temp_cls.put(ctx, t_varinfo->cls);
+    temp_var.put(ctx, t_varinfo->name);
 }
 
 void IRListener::exitBinaryExpr(C0Parser::BinaryExprContext * ctx) {
@@ -312,30 +303,50 @@ void IRListener::exitBinaryExpr(C0Parser::BinaryExprContext * ctx) {
         ir.addIMC(t_v, op, lhs, rhs);
     }
     else {// $$需要label跳转
-        auto labels = if_labels.get(ctx->parent->parent);
-        
-        if (labels.size()) { // 说明是在if condition里
-            // std::cout<<"ya";
-            // std::cout<<labels[0]<<std::endl;
+        auto iflabs = if_labels.get(ctx->parent->parent);
+        auto whlabs = while_labels.get(ctx->parent->parent);
 
+        if (iflabs.size()) { // 说明是在if condition里
             if (op == "==") {
-                ir.addIMC(labels[0], OP::NEQ, lhs, rhs);
+                ir.addIMC(iflabs[0], OP::NEQ, lhs, rhs);
             }
             else if (op == "!=") {
-                ir.addIMC(labels[0], OP::EQU, lhs, rhs);
+                ir.addIMC(iflabs[0], OP::EQU, lhs, rhs);
             }
             else if (op == "<=") {
-                ir.addIMC(labels[0], OP::GRT, lhs, rhs);
+                ir.addIMC(iflabs[0], OP::GRT, lhs, rhs);
             }
             else if (op == "<") {
-                ir.addIMC(labels[0], OP::GREQ, lhs, rhs);
+                ir.addIMC(iflabs[0], OP::GREQ, lhs, rhs);
             }
             else if (op == ">=") {
-                ir.addIMC(labels[0], OP::LES, lhs, rhs);
+                ir.addIMC(iflabs[0], OP::LES, lhs, rhs);
             }
             else if (op == ">") {
-                ir.addIMC(labels[0], OP::LESEQ, lhs, rhs);
+                ir.addIMC(iflabs[0], OP::LESEQ, lhs, rhs);
             }
+        }
+
+        if (whlabs.size()) { // 在while condition里
+            if (op == "==") {
+                ir.addIMC(whlabs[0], OP::NEQ, lhs, rhs);
+            }
+            else if (op == "!=") {
+                ir.addIMC(whlabs[1], OP::EQU, lhs, rhs);
+            }
+            else if (op == "<=") {
+                ir.addIMC(whlabs[1], OP::GRT, lhs, rhs);
+            }
+            else if (op == "<") {
+                ir.addIMC(whlabs[1], OP::GREQ, lhs, rhs);
+            }
+            else if (op == ">=") {
+                ir.addIMC(whlabs[1], OP::LES, lhs, rhs);
+            }
+            else if (op == ">") {
+                ir.addIMC(whlabs[1], OP::LESEQ, lhs, rhs);
+            }
+
         }
     }
 
@@ -460,4 +471,34 @@ void IRListener::enterElseStatement(C0Parser::ElseStatementContext * ctx) {
 
     ir.addIMC(labels[1], OP::GOTO, "0", "0");
     ir.addIMC(labels[0], OP::LABEL, "0", "0");
+}
+
+
+void IRListener::enterWhileStmt(C0Parser::WhileStmtContext * ctx) {
+    auto label1 = ir.gen_label();
+    auto label2 = ir.gen_label();
+
+    ir.addIMC(label1, OP::LABEL, "0", "0");
+
+    std::vector<std::string> t_labels = {label1, label2};
+    while_labels.put(ctx, t_labels);
+
+}
+void IRListener::exitWhileStmt(C0Parser::WhileStmtContext * ctx) {
+    auto labels = while_labels.get(ctx);
+    ir.addIMC(labels[0], OP::GOTO, "0", "0");
+    ir.addIMC(labels[1], OP::LABEL, "0", "0");
+}
+
+void IRListener::exitWhileCondition(C0Parser::WhileConditionContext * ctx) {
+    auto labels = while_labels.get(ctx->parent);
+
+    auto t_var = temp_var.get(ctx->expression());
+
+    if (t_var == "") {
+        // 说明是binaryExpr,　跳转在exitExpr中
+    }
+    else {
+        ir.addIMC(labels[1], OP::EQU, t_var, "0");
+    }
 }

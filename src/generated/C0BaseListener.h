@@ -79,6 +79,12 @@ public:
   virtual void enterElseStatement(C0Parser::ElseStatementContext * /*ctx*/) override { }
   virtual void exitElseStatement(C0Parser::ElseStatementContext * /*ctx*/) override { }
 
+  virtual void enterWhileCondition(C0Parser::WhileConditionContext * /*ctx*/) override { }
+  virtual void exitWhileCondition(C0Parser::WhileConditionContext * /*ctx*/) override { }
+
+  virtual void enterWhileStatement(C0Parser::WhileStatementContext * /*ctx*/) override { }
+  virtual void exitWhileStatement(C0Parser::WhileStatementContext * /*ctx*/) override { }
+
   virtual void enterExpressionList(C0Parser::ExpressionListContext * /*ctx*/) override { }
   virtual void exitExpressionList(C0Parser::ExpressionListContext * /*ctx*/) override { }
 

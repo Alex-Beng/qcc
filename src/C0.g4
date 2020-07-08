@@ -33,7 +33,7 @@ statement
     | 'if' '(' ifCondition ')' ifStatement ('else' elseStatement)?       # ifStmt
     | 'for' '(' init=expression? ';' cond=expression? ';'
                                      incr=expression? ')' statement      # forStmt
-    | 'while' '(' expression ')' statement                               # whileStmt
+    | 'while' '(' whileCondition ')' whileStatement                      # whileStmt
     | 'return' expression? ';'                                           # returnStmt
     | 'break' ';'                                                        # breakStmt
     | 'continue' ';'                                                     # continueStmt
@@ -50,6 +50,14 @@ ifStatement
     ;
 
 elseStatement
+    : statement
+    ;
+
+whileCondition
+    : expression
+    ;
+
+whileStatement
     : statement
     ;
 
