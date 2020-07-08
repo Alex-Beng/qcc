@@ -30,7 +30,7 @@ block
 statement
     : block                                                              # blockStmt
     | variableDefinition                                                 # varDefStmt
-    | 'if' '(' expression ')' statement ('else' statement)?              # ifStmt
+    | 'if' '(' ifCondition ')' ifStatement ('else' elseStatement)?       # ifStmt
     | 'for' '(' init=expression? ';' cond=expression? ';'
                                      incr=expression? ')' statement      # forStmt
     | 'while' '(' expression ')' statement                               # whileStmt
@@ -39,6 +39,18 @@ statement
     | 'continue' ';'                                                     # continueStmt
     | expression ';'                                                     # exprStmt
     | ';'                                                                # blankStmt
+    ;
+
+ifCondition
+    : expression
+    ;
+
+ifStatement
+    : statement
+    ;
+
+elseStatement
+    : statement
     ;
 
 expressionList

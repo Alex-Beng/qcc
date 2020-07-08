@@ -26,6 +26,10 @@ public:
 	// 临时变量为array时的idx
 	antlr4::tree::ParseTreeProperty<std::string> temp_idx;
 
+	// if语句用到的label
+	antlr4::tree::ParseTreeProperty<std::vector<std::string>> if_labels;
+
+
 public:
 	IRListener() {
 		curr_func = "";
@@ -63,6 +67,10 @@ public:
 
 	void enterIfStmt(C0Parser::IfStmtContext * /*ctx*/);
   	void exitIfStmt(C0Parser::IfStmtContext * /*ctx*/);
+
+  	void exitIfCondition(C0Parser::IfConditionContext * /*ctx*/);
+
+	void enterElseStatement(C0Parser::ElseStatementContext * /*ctx*/);
 
 };
 

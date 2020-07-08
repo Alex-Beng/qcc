@@ -24,7 +24,8 @@ public:
   enum {
     RuleCompilationUnit = 0, RuleFunctionDefinition = 1, RuleVariableDefinition = 2, 
     RuleParameter = 3, RuleTypeType = 4, RuleBlock = 5, RuleStatement = 6, 
-    RuleExpressionList = 7, RuleExpression = 8, RulePrimary = 9
+    RuleIfCondition = 7, RuleIfStatement = 8, RuleElseStatement = 9, RuleExpressionList = 10, 
+    RuleExpression = 11, RulePrimary = 12
   };
 
   C0Parser(antlr4::TokenStream *input);
@@ -44,6 +45,9 @@ public:
   class TypeTypeContext;
   class BlockContext;
   class StatementContext;
+  class IfConditionContext;
+  class IfStatementContext;
+  class ElseStatementContext;
   class ExpressionListContext;
   class ExpressionContext;
   class PrimaryContext; 
@@ -267,9 +271,9 @@ public:
   public:
     IfStmtContext(StatementContext *ctx);
 
-    ExpressionContext *expression();
-    std::vector<StatementContext *> statement();
-    StatementContext* statement(size_t i);
+    IfConditionContext *ifCondition();
+    IfStatementContext *ifStatement();
+    ElseStatementContext *elseStatement();
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
 
@@ -319,6 +323,51 @@ public:
   };
 
   StatementContext* statement();
+
+  class  IfConditionContext : public antlr4::ParserRuleContext {
+  public:
+    IfConditionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    ExpressionContext *expression();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  IfConditionContext* ifCondition();
+
+  class  IfStatementContext : public antlr4::ParserRuleContext {
+  public:
+    IfStatementContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    StatementContext *statement();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  IfStatementContext* ifStatement();
+
+  class  ElseStatementContext : public antlr4::ParserRuleContext {
+  public:
+    ElseStatementContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    StatementContext *statement();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  ElseStatementContext* elseStatement();
 
   class  ExpressionListContext : public antlr4::ParserRuleContext {
   public:

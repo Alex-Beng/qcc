@@ -87,6 +87,18 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual antlrcpp::Any visitIfCondition(C0Parser::IfConditionContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitIfStatement(C0Parser::IfStatementContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitElseStatement(C0Parser::ElseStatementContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual antlrcpp::Any visitExpressionList(C0Parser::ExpressionListContext *ctx) override {
     return visitChildren(ctx);
   }

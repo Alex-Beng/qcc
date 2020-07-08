@@ -70,6 +70,15 @@ public:
   virtual void enterBlankStmt(C0Parser::BlankStmtContext * /*ctx*/) override { }
   virtual void exitBlankStmt(C0Parser::BlankStmtContext * /*ctx*/) override { }
 
+  virtual void enterIfCondition(C0Parser::IfConditionContext * /*ctx*/) override { }
+  virtual void exitIfCondition(C0Parser::IfConditionContext * /*ctx*/) override { }
+
+  virtual void enterIfStatement(C0Parser::IfStatementContext * /*ctx*/) override { }
+  virtual void exitIfStatement(C0Parser::IfStatementContext * /*ctx*/) override { }
+
+  virtual void enterElseStatement(C0Parser::ElseStatementContext * /*ctx*/) override { }
+  virtual void exitElseStatement(C0Parser::ElseStatementContext * /*ctx*/) override { }
+
   virtual void enterExpressionList(C0Parser::ExpressionListContext * /*ctx*/) override { }
   virtual void exitExpressionList(C0Parser::ExpressionListContext * /*ctx*/) override { }
 

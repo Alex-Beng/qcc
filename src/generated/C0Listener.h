@@ -68,6 +68,15 @@ public:
   virtual void enterBlankStmt(C0Parser::BlankStmtContext *ctx) = 0;
   virtual void exitBlankStmt(C0Parser::BlankStmtContext *ctx) = 0;
 
+  virtual void enterIfCondition(C0Parser::IfConditionContext *ctx) = 0;
+  virtual void exitIfCondition(C0Parser::IfConditionContext *ctx) = 0;
+
+  virtual void enterIfStatement(C0Parser::IfStatementContext *ctx) = 0;
+  virtual void exitIfStatement(C0Parser::IfStatementContext *ctx) = 0;
+
+  virtual void enterElseStatement(C0Parser::ElseStatementContext *ctx) = 0;
+  virtual void exitElseStatement(C0Parser::ElseStatementContext *ctx) = 0;
+
   virtual void enterExpressionList(C0Parser::ExpressionListContext *ctx) = 0;
   virtual void exitExpressionList(C0Parser::ExpressionListContext *ctx) = 0;
 
