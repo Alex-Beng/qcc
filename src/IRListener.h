@@ -32,6 +32,12 @@ public:
 	// while语句用到的label
 	antlr4::tree::ParseTreeProperty<std::vector<std::string>> while_labels;
 
+	// for语句用到的label
+	antlr4::tree::ParseTreeProperty<std::vector<std::string>> for_labels;
+
+	// for语句step的赋值语句
+	antlr4::tree::ParseTreeProperty<IRCode> for_step_ass;
+
 public:
 	IRListener() {
 		curr_func = "";
@@ -78,6 +84,16 @@ public:
   	void exitWhileStmt(C0Parser::WhileStmtContext * /*ctx*/);
 
 	void exitWhileCondition(C0Parser::WhileConditionContext * /*ctx*/);
+
+  	void enterForCondition(C0Parser::ForConditionContext * /*ctx*/);
+   	void exitForCondition(C0Parser::ForConditionContext * /*ctx*/);
+
+	void enterForStmt(C0Parser::ForStmtContext * /*ctx*/);
+	void exitForStmt(C0Parser::ForStmtContext * /*ctx*/);
+
+
+	void enterForStep(C0Parser::ForStepContext * /*ctx*/);
+	void exitForStep(C0Parser::ForStepContext * /*ctx*/);
 
 };
 

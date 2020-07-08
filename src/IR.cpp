@@ -23,6 +23,13 @@ void IR::addIMC(std::string rst, const std::string &op, std::string op1, std::st
     this->ir_codes.push_back(t);
 }
 
+IRCode IR::popIMR() {
+	auto back_ir = this->ir_codes[ir_codes.size()-1];
+	this->ir_codes.pop_back();
+	
+	return back_ir;
+}
+
 void IR::printIMC(std::ofstream&o) {
 	for(auto iter = ir_codes.begin(); iter!= ir_codes.end(); iter++) {
 		o << std::right;
@@ -31,3 +38,4 @@ void IR::printIMC(std::ofstream&o) {
 	}
 
 }
+

@@ -107,6 +107,14 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual antlrcpp::Any visitForCondition(C0Parser::ForConditionContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitForStep(C0Parser::ForStepContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual antlrcpp::Any visitExpressionList(C0Parser::ExpressionListContext *ctx) override {
     return visitChildren(ctx);
   }

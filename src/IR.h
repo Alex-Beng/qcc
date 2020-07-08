@@ -67,10 +67,9 @@ public:
 
     std::string gen_temp(std::string &curFunc, int lc, int cls, SymbolTable& st);
 	std::string gen_label();
-	//std::string gen_str();
 
-	bool is_operand_num(std::string &s, int &value);
 	void addIMC(std::string rst, const std::string &op, std::string op1, std::string op2);
+	IRCode popIMR();
 	void printIMC(std::ofstream&o);
 };
 

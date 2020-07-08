@@ -263,6 +263,26 @@ public interface C0Listener extends ParseTreeListener {
 	 */
 	void exitWhileStatement(C0Parser.WhileStatementContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link C0Parser#forCondition}.
+	 * @param ctx the parse tree
+	 */
+	void enterForCondition(C0Parser.ForConditionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link C0Parser#forCondition}.
+	 * @param ctx the parse tree
+	 */
+	void exitForCondition(C0Parser.ForConditionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link C0Parser#forStep}.
+	 * @param ctx the parse tree
+	 */
+	void enterForStep(C0Parser.ForStepContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link C0Parser#forStep}.
+	 * @param ctx the parse tree
+	 */
+	void exitForStep(C0Parser.ForStepContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link C0Parser#expressionList}.
 	 * @param ctx the parse tree
 	 */

@@ -85,6 +85,12 @@ public:
   virtual void enterWhileStatement(C0Parser::WhileStatementContext * /*ctx*/) override { }
   virtual void exitWhileStatement(C0Parser::WhileStatementContext * /*ctx*/) override { }
 
+  virtual void enterForCondition(C0Parser::ForConditionContext * /*ctx*/) override { }
+  virtual void exitForCondition(C0Parser::ForConditionContext * /*ctx*/) override { }
+
+  virtual void enterForStep(C0Parser::ForStepContext * /*ctx*/) override { }
+  virtual void exitForStep(C0Parser::ForStepContext * /*ctx*/) override { }
+
   virtual void enterExpressionList(C0Parser::ExpressionListContext * /*ctx*/) override { }
   virtual void exitExpressionList(C0Parser::ExpressionListContext * /*ctx*/) override { }
 

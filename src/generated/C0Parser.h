@@ -25,8 +25,8 @@ public:
     RuleCompilationUnit = 0, RuleFunctionDefinition = 1, RuleVariableDefinition = 2, 
     RuleParameter = 3, RuleTypeType = 4, RuleBlock = 5, RuleStatement = 6, 
     RuleIfCondition = 7, RuleIfStatement = 8, RuleElseStatement = 9, RuleWhileCondition = 10, 
-    RuleWhileStatement = 11, RuleExpressionList = 12, RuleExpression = 13, 
-    RulePrimary = 14
+    RuleWhileStatement = 11, RuleForCondition = 12, RuleForStep = 13, RuleExpressionList = 14, 
+    RuleExpression = 15, RulePrimary = 16
   };
 
   C0Parser(antlr4::TokenStream *input);
@@ -51,6 +51,8 @@ public:
   class ElseStatementContext;
   class WhileConditionContext;
   class WhileStatementContext;
+  class ForConditionContext;
+  class ForStepContext;
   class ExpressionListContext;
   class ExpressionContext;
   class PrimaryContext; 
@@ -225,12 +227,10 @@ public:
   public:
     ForStmtContext(StatementContext *ctx);
 
-    C0Parser::ExpressionContext *init = nullptr;
-    C0Parser::ExpressionContext *cond = nullptr;
-    C0Parser::ExpressionContext *incr = nullptr;
     StatementContext *statement();
-    std::vector<ExpressionContext *> expression();
-    ExpressionContext* expression(size_t i);
+    ExpressionContext *expression();
+    ForConditionContext *forCondition();
+    ForStepContext *forStep();
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
 
@@ -401,6 +401,36 @@ public:
   };
 
   WhileStatementContext* whileStatement();
+
+  class  ForConditionContext : public antlr4::ParserRuleContext {
+  public:
+    ForConditionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    ExpressionContext *expression();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  ForConditionContext* forCondition();
+
+  class  ForStepContext : public antlr4::ParserRuleContext {
+  public:
+    ForStepContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    ExpressionContext *expression();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  ForStepContext* forStep();
 
   class  ExpressionListContext : public antlr4::ParserRuleContext {
   public:

@@ -305,6 +305,7 @@ void IRListener::exitBinaryExpr(C0Parser::BinaryExprContext * ctx) {
     else {// $$需要label跳转
         auto iflabs = if_labels.get(ctx->parent->parent);
         auto whlabs = while_labels.get(ctx->parent->parent);
+        auto forlabs = for_labels.get(ctx->parent->parent);
 
         if (iflabs.size()) { // 说明是在if condition里
             if (op == "==") {
@@ -329,7 +330,7 @@ void IRListener::exitBinaryExpr(C0Parser::BinaryExprContext * ctx) {
 
         if (whlabs.size()) { // 在while condition里
             if (op == "==") {
-                ir.addIMC(whlabs[0], OP::NEQ, lhs, rhs);
+                ir.addIMC(whlabs[1], OP::NEQ, lhs, rhs);
             }
             else if (op == "!=") {
                 ir.addIMC(whlabs[1], OP::EQU, lhs, rhs);
@@ -345,6 +346,28 @@ void IRListener::exitBinaryExpr(C0Parser::BinaryExprContext * ctx) {
             }
             else if (op == ">") {
                 ir.addIMC(whlabs[1], OP::LESEQ, lhs, rhs);
+            }
+
+        }
+
+        if (forlabs.size()) { // for condition里
+            if (op == "==") {
+                ir.addIMC(forlabs[1], OP::NEQ, lhs, rhs);
+            }
+            else if (op == "!=") {
+                ir.addIMC(forlabs[1], OP::EQU, lhs, rhs);
+            }
+            else if (op == "<=") {
+                ir.addIMC(forlabs[1], OP::GRT, lhs, rhs);
+            }
+            else if (op == "<") {
+                ir.addIMC(forlabs[1], OP::GREQ, lhs, rhs);
+            }
+            else if (op == ">=") {
+                ir.addIMC(forlabs[1], OP::LES, lhs, rhs);
+            }
+            else if (op == ">") {
+                ir.addIMC(forlabs[1], OP::LESEQ, lhs, rhs);
             }
 
         }
@@ -500,5 +523,59 @@ void IRListener::exitWhileCondition(C0Parser::WhileConditionContext * ctx) {
     }
     else {
         ir.addIMC(labels[1], OP::EQU, t_var, "0");
+    }
+}
+
+void IRListener::enterForStmt(C0Parser::ForStmtContext * ctx) {
+    auto label1 = ir.gen_label();
+    auto label2 = ir.gen_label();
+
+    std::vector<std::string> t_labels = {label1, label2};
+    for_labels.put(ctx, t_labels);
+}
+void IRListener::exitForStmt(C0Parser::ForStmtContext * ctx) {
+    // step ass
+    if (ctx->forStep()) {
+        auto step_ass = for_step_ass.get(ctx->forStep());
+        ir.addIMC(step_ass.rst, step_ass.op, step_ass.num1, step_ass.num2);
+    }
+    
+
+    auto labels = for_labels.get(ctx);
+
+    ir.addIMC(labels[0], OP::GOTO, "0", "0");
+    ir.addIMC(labels[1], OP::LABEL, "0", "0");
+}
+
+void IRListener::enterForCondition(C0Parser::ForConditionContext * ctx) {
+    auto labels = for_labels.get(ctx->parent);
+
+    ir.addIMC(labels[0], OP::LABEL, "0", "0");
+}
+
+void IRListener::exitForCondition(C0Parser::ForConditionContext * ctx) {
+    auto labels = for_labels.get(ctx->parent);
+
+    auto t_var = temp_var.get(ctx->expression());
+
+    if (t_var == "") {
+        // 说明是binaryExpr,　跳转在exitExpr中
+    }
+    else {
+        ir.addIMC(labels[1], OP::EQU, t_var, "0");
+    }
+
+}
+
+void IRListener::enterForStep(C0Parser::ForStepContext * ctx) {
+
+}
+void IRListener::exitForStep(C0Parser::ForStepContext * ctx) {
+    auto back_ir = ir.popIMR();
+    if (back_ir.op==OP::ADD && back_ir.num1=="0") {// 是赋值语句
+        for_step_ass.put(ctx, back_ir);
+    }
+    else {
+        ir.addIMC(back_ir.rst, back_ir.op, back_ir.num1, back_ir.num2);
     }
 }

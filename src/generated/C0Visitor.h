@@ -65,6 +65,10 @@ public:
 
     virtual antlrcpp::Any visitWhileStatement(C0Parser::WhileStatementContext *context) = 0;
 
+    virtual antlrcpp::Any visitForCondition(C0Parser::ForConditionContext *context) = 0;
+
+    virtual antlrcpp::Any visitForStep(C0Parser::ForStepContext *context) = 0;
+
     virtual antlrcpp::Any visitExpressionList(C0Parser::ExpressionListContext *context) = 0;
 
     virtual antlrcpp::Any visitPrefixExpr(C0Parser::PrefixExprContext *context) = 0;

@@ -10,9 +10,9 @@ functionDefinition
    ;
 
 variableDefinition
-    : typeType Identifier ';'                           #defVar
-    | typeType Identifier ('=' rhs=(CharLiteral|DecimalInteger))? ';'         #defConst
-    | typeType Identifier '[' DecimalInteger ']' ';'    #defArray
+    : typeType Identifier ';'                                           #defVar
+    | typeType Identifier ('=' rhs=(CharLiteral|DecimalInteger))? ';'   #defConst
+    | typeType Identifier '[' DecimalInteger ']' ';'                    #defArray
     ;
 
 parameter
@@ -31,8 +31,7 @@ statement
     : block                                                              # blockStmt
     | variableDefinition                                                 # varDefStmt
     | 'if' '(' ifCondition ')' ifStatement ('else' elseStatement)?       # ifStmt
-    | 'for' '(' init=expression? ';' cond=expression? ';'
-                                     incr=expression? ')' statement      # forStmt
+    | 'for' '(' expression? ';' forCondition? ';'forStep? ')' statement  # forStmt
     | 'while' '(' whileCondition ')' whileStatement                      # whileStmt
     | 'return' expression? ';'                                           # returnStmt
     | 'break' ';'                                                        # breakStmt
@@ -61,6 +60,14 @@ whileStatement
     : statement
     ;
 
+forCondition
+    : expression
+    ;
+
+forStep
+    : expression
+    ;
+
 expressionList
     : expression (',' expression)*
     ;
@@ -68,6 +75,8 @@ expressionList
 expression
     : primary                                            # primaryExpr
     | expression '[' expression ']'                      # arefExpr
+    | 'printf' '(' expressionList? ')'                   # printfExpr
+    | 'scanf' '(' expressionList? ')'                    # scanfExpr
     | expression '(' expressionList? ')'                 # funcallExpr
     | op=('+' | '-') expression                          # prefixExpr
     | op=('~' | '!' ) expression                         # prefixExpr
@@ -79,17 +88,10 @@ expression
     ;
 
 primary
-    : '(' expression ')'   # subExpr
-    | Identifier           # variableExpr
-    | lite=(DecimalInteger|CharLiteral|StringLiteral)              # literalExpr
+    : '(' expression ')'                                # subExpr
+    | Identifier                                        # variableExpr
+    | lite=(DecimalInteger|CharLiteral|StringLiteral)   # literalExpr
     ;
-
-// literal
-    // : DecimalInteger          # DecIntegerConst
-    // | CharLiteral             # CharConst
-    // | StringLiteral           # StringConst
-    // : 
-    // ;
 
 CharLiteral
     : '\'' Character '\''
