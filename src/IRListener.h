@@ -98,6 +98,7 @@ public:
 
 	void exitPrintfExpr(C0Parser::PrintfExprContext * /*ctx*/);
 
+	void enterScanfExpr(C0Parser::ScanfExprContext * /*ctx*/);
 };
 
 

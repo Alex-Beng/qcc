@@ -654,3 +654,34 @@ void IRListener::exitPrintfExpr(C0Parser::PrintfExprContext * ctx) {
     }
 }
 
+void IRListener::enterScanfExpr(C0Parser::ScanfExprContext * ctx) {
+    int param_num = 0;
+    if (ctx->expressionList())
+        param_num = ctx->expressionList()->expression().size();
+    
+    for (int i=0; i<param_num; i++) {
+        auto param = ctx->expressionList()->expression()[i];
+        auto param_name = param->getText();
+
+        auto param_info = sym_table.lookup(curr_func, param_name, false);
+
+        if (param_info == NULL) {
+            throw std::runtime_error("undefined param at line: "+std::to_string(ctx->getStart()->getLine()));
+        }
+
+        if (param_info->type == TYPE_VAR || param_info->type == TYPE_PARAM) {// 只有这两种可scan
+            if (param_info->cls == CLS_INT) {
+                ir.addIMC("int", OP::SCAN, param_name, "0");
+            }
+            else if (param_info->cls == CLS_CHAR) {
+                ir.addIMC("char", OP::SCAN, param_name, "0");
+            }
+            else {
+                throw std::runtime_error("error cls param of scanf at line: "+std::to_string(ctx->getStart()->getLine()));
+            }
+        }   
+        else {
+            throw std::runtime_error("error type param of scanf at line: "+std::to_string(ctx->getStart()->getLine()));
+        }
+    }
+}
