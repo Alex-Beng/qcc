@@ -81,6 +81,10 @@ public:
 
     virtual antlrcpp::Any visitBinaryExpr(C0Parser::BinaryExprContext *context) = 0;
 
+    virtual antlrcpp::Any visitPrintfExpr(C0Parser::PrintfExprContext *context) = 0;
+
+    virtual antlrcpp::Any visitScanfExpr(C0Parser::ScanfExprContext *context) = 0;
+
     virtual antlrcpp::Any visitAssignExpr(C0Parser::AssignExprContext *context) = 0;
 
     virtual antlrcpp::Any visitSubExpr(C0Parser::SubExprContext *context) = 0;

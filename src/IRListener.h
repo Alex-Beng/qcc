@@ -96,6 +96,8 @@ public:
 	void enterFuncallExpr(C0Parser::FuncallExprContext * /*ctx*/);
 	void exitFuncallExpr(C0Parser::FuncallExprContext * /*ctx*/);
 
+	void exitPrintfExpr(C0Parser::PrintfExprContext * /*ctx*/);
+
 };
 
 

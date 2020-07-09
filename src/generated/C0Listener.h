@@ -107,6 +107,12 @@ public:
   virtual void enterBinaryExpr(C0Parser::BinaryExprContext *ctx) = 0;
   virtual void exitBinaryExpr(C0Parser::BinaryExprContext *ctx) = 0;
 
+  virtual void enterPrintfExpr(C0Parser::PrintfExprContext *ctx) = 0;
+  virtual void exitPrintfExpr(C0Parser::PrintfExprContext *ctx) = 0;
+
+  virtual void enterScanfExpr(C0Parser::ScanfExprContext *ctx) = 0;
+  virtual void exitScanfExpr(C0Parser::ScanfExprContext *ctx) = 0;
+
   virtual void enterAssignExpr(C0Parser::AssignExprContext *ctx) = 0;
   virtual void exitAssignExpr(C0Parser::AssignExprContext *ctx) = 0;
 

@@ -606,21 +606,12 @@ void IRListener::exitFuncallExpr(C0Parser::FuncallExprContext * ctx) {
     auto func_info = sym_table.lookup(curr_func, func_name, false);
 
     auto func_symtab = sym_table.lookup_func(func_name);
-    for (auto& it : func_symtab) {
-        std::cout<<it.first<<' '<<it.second.length<<' '
-        <<it.second.type<<' '<<TYPE_PARAM<<'\n';
-    }
 
     int cnt = 0;
     for (auto& param : ctx->expressionList()->expression()) {
-        // std::cout<<temp_var.get(param);
         ir.addIMC(func_name, OP::PUSH_PARA, temp_var.get(param), std::to_string(cnt));
 
         auto* para_info = sym_table.lookup_para(func_symtab, cnt);
-        if (para_info == NULL) {
-            std::cout<<"opss"<<'\n';
-            continue;
-        }
         if (para_info->cls != temp_cls.get(param)) {
             throw std::runtime_error("unmatch param type at line: "+std::to_string(ctx->getStart()->getLine()));
         }
@@ -640,3 +631,26 @@ void IRListener::exitFuncallExpr(C0Parser::FuncallExprContext * ctx) {
     temp_cls.put(ctx, func_info->cls);
 
 }
+
+void IRListener::exitPrintfExpr(C0Parser::PrintfExprContext * ctx) {
+    int param_num = 0;
+    if (ctx->expressionList())
+        param_num = ctx->expressionList()->expression().size();
+    
+    for (int i=0; i<param_num; i++) {
+        auto expr = ctx->expressionList()->expression()[i];
+        auto expr_cls = temp_cls.get(expr);
+        auto expr_var = temp_var.get(expr);
+
+        if (expr_cls == CLS_STR) {
+            ir.addIMC("str", OP::PRINT, OP::STR_HEAD+expr_var, "0");
+        }
+        else if (expr_cls == CLS_INT) {
+            ir.addIMC("int", OP::PRINT, expr_var, "0");
+        }
+        else if (expr_cls == CLS_CHAR) {
+            ir.addIMC("char", OP::PRINT, expr_var, "0");
+        }
+    }
+}
+

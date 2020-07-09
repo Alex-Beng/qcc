@@ -36,6 +36,7 @@ void main() {
     //     for (j=0; j<10; j=j+1) {
     //         a = 100;
                 i = func(1, 2, 3, a);
+                printf(i, "hello");
     //     }
     // }
 

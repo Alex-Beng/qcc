@@ -139,6 +139,14 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual antlrcpp::Any visitPrintfExpr(C0Parser::PrintfExprContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitScanfExpr(C0Parser::ScanfExprContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual antlrcpp::Any visitAssignExpr(C0Parser::AssignExprContext *ctx) override {
     return visitChildren(ctx);
   }
