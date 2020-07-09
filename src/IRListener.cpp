@@ -685,3 +685,35 @@ void IRListener::enterScanfExpr(C0Parser::ScanfExprContext * ctx) {
         }
     }
 }
+
+void IRListener::exitReturnStmt(C0Parser::ReturnStmtContext * ctx) {
+
+    auto func_info = sym_table.lookup("", curr_func, false);
+
+    // std::cout<<func_info->cls<<' '<<CLS_INT<<'\n';
+    if (func_info->cls == CLS_VOID) {
+        if (ctx->expression()) {// void 写了返回值
+            throw std::runtime_error("unexpect expr in return at line: "+std::to_string(ctx->getStart()->getLine()));
+        }
+    }
+    else {
+        if (!ctx->expression()) {// 恰恰相反，有返回值没写
+            throw std::runtime_error("expect expr in return at line: "+std::to_string(ctx->getStart()->getLine()));
+        }
+
+        // check cls
+        auto expr_cls = temp_cls.get(ctx->expression());
+        if (expr_cls != func_info->cls) {
+            throw std::runtime_error("wrong type expr in return at line: "+std::to_string(ctx->getStart()->getLine()));
+        }
+
+        auto expr_var = temp_var.get(ctx->expression());
+        ir.addIMC(OP::RETURN_REG, OP::ADD, expr_var, "0");
+    }
+
+    if (curr_func == "main")
+        ir.addIMC("0", OP::EXIT, "0", "0");
+    else
+        ir.addIMC("0", OP::EXIT, "0", "0");
+
+}
