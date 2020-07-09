@@ -91,9 +91,10 @@ public:
 	void enterForStmt(C0Parser::ForStmtContext * /*ctx*/);
 	void exitForStmt(C0Parser::ForStmtContext * /*ctx*/);
 
-
-	void enterForStep(C0Parser::ForStepContext * /*ctx*/);
 	void exitForStep(C0Parser::ForStepContext * /*ctx*/);
+
+	void enterFuncallExpr(C0Parser::FuncallExprContext * /*ctx*/);
+	void exitFuncallExpr(C0Parser::FuncallExprContext * /*ctx*/);
 
 };
 

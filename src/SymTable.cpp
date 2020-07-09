@@ -46,7 +46,7 @@ std::map<std::string, VarInfo> SymbolTable::lookup_func(const std::string &func_
 
 VarInfo* SymbolTable::lookup_para(std::map<std::string, VarInfo> &t_func_sym, int place) {
     for (auto iter=t_func_sym.begin(); iter!=t_func_sym.end(); iter++) {
-        if (iter->first.length()==place && iter->second.type==TYPE_PARAM) {
+        if (iter->second.length==place && iter->second.type==TYPE_PARAM) {
             return &(iter->second);
         }
     }

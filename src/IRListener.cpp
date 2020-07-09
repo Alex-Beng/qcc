@@ -70,6 +70,7 @@ void IRListener::enterFunctionDefinition(C0Parser::FunctionDefinitionContext* ct
         else {
             throw std::runtime_error("multi defination of param "+param_name+" at line: "+std::to_string(param->getStart()->getLine()));
         }
+        t_cnt++;
     }
 
 }
@@ -567,9 +568,6 @@ void IRListener::exitForCondition(C0Parser::ForConditionContext * ctx) {
 
 }
 
-void IRListener::enterForStep(C0Parser::ForStepContext * ctx) {
-
-}
 void IRListener::exitForStep(C0Parser::ForStepContext * ctx) {
     auto back_ir = ir.popIMR();
     if (back_ir.op==OP::ADD && back_ir.num1=="0") {// 是赋值语句
@@ -578,4 +576,67 @@ void IRListener::exitForStep(C0Parser::ForStepContext * ctx) {
     else {
         ir.addIMC(back_ir.rst, back_ir.op, back_ir.num1, back_ir.num2);
     }
+}
+
+void IRListener::enterFuncallExpr(C0Parser::FuncallExprContext * ctx) {
+    auto func_name = ctx->expression()->getText();
+
+    int param_num = 0;
+    if (ctx->expressionList())
+        param_num = ctx->expressionList()->expression().size();
+
+    // std::cout<<param_num<<'\n';
+    // 当前scope查找func
+    auto func_info = sym_table.lookup(curr_func, func_name, false);
+
+    if (func_info->type != TYPE_FUNC) {
+        throw std::runtime_error("expecting func type at line: "+std::to_string(ctx->getStart()->getLine()));
+    }
+
+    temp_cls.put(ctx, func_info->cls);
+
+    if (param_num != func_info->length) {// 参数数量不一致
+        throw std::runtime_error("param num error at line: "+std::to_string(ctx->getStart()->getLine()));
+    }
+
+}
+void IRListener::exitFuncallExpr(C0Parser::FuncallExprContext * ctx) {
+    auto func_name = ctx->expression()->getText();
+
+    auto func_info = sym_table.lookup(curr_func, func_name, false);
+
+    auto func_symtab = sym_table.lookup_func(func_name);
+    for (auto& it : func_symtab) {
+        std::cout<<it.first<<' '<<it.second.length<<' '
+        <<it.second.type<<' '<<TYPE_PARAM<<'\n';
+    }
+
+    int cnt = 0;
+    for (auto& param : ctx->expressionList()->expression()) {
+        // std::cout<<temp_var.get(param);
+        ir.addIMC(func_name, OP::PUSH_PARA, temp_var.get(param), std::to_string(cnt));
+
+        auto* para_info = sym_table.lookup_para(func_symtab, cnt);
+        if (para_info == NULL) {
+            std::cout<<"opss"<<'\n';
+            continue;
+        }
+        if (para_info->cls != temp_cls.get(param)) {
+            throw std::runtime_error("unmatch param type at line: "+std::to_string(ctx->getStart()->getLine()));
+        }
+        cnt++;
+    }
+
+    ir.addIMC(func_name, OP::CALL, "0", "0");
+    if (func_info->cls == CLS_VOID) {
+        ;
+    }
+    else {
+        auto ret_var = ir.gen_temp(curr_func, ctx->getStart()->getLine(), func_info->cls, sym_table);
+        ir.addIMC(ret_var, OP::ADD, OP::RETURN_REG, "0");
+        temp_var.put(ctx, ret_var);
+    }
+
+    temp_cls.put(ctx, func_info->cls);
+
 }

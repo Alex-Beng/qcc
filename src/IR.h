@@ -50,6 +50,8 @@ namespace OP {
 	constexpr auto STR_HEAD = "~";
 	/* label head, %1, %2, ... */
 	constexpr auto LABEL_HEAD = "%";
+
+	constexpr auto RETURN_REG = "RET_v0";
 }
 
 class IR {
