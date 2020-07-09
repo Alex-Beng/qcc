@@ -214,6 +214,20 @@ public interface C0Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitBinaryExpr(C0Parser.BinaryExprContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code printfExpr}
+	 * labeled alternative in {@link C0Parser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPrintfExpr(C0Parser.PrintfExprContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code scanfExpr}
+	 * labeled alternative in {@link C0Parser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitScanfExpr(C0Parser.ScanfExprContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code assignExpr}
 	 * labeled alternative in {@link C0Parser#expression}.
 	 * @param ctx the parse tree

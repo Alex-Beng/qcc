@@ -353,6 +353,30 @@ public interface C0Listener extends ParseTreeListener {
 	 */
 	void exitBinaryExpr(C0Parser.BinaryExprContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code printfExpr}
+	 * labeled alternative in {@link C0Parser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterPrintfExpr(C0Parser.PrintfExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code printfExpr}
+	 * labeled alternative in {@link C0Parser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitPrintfExpr(C0Parser.PrintfExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code scanfExpr}
+	 * labeled alternative in {@link C0Parser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterScanfExpr(C0Parser.ScanfExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code scanfExpr}
+	 * labeled alternative in {@link C0Parser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitScanfExpr(C0Parser.ScanfExprContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code assignExpr}
 	 * labeled alternative in {@link C0Parser#expression}.
 	 * @param ctx the parse tree

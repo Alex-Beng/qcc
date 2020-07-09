@@ -717,3 +717,31 @@ void IRListener::exitReturnStmt(C0Parser::ReturnStmtContext * ctx) {
         ir.addIMC("0", OP::EXIT, "0", "0");
 
 }
+
+void IRListener::enterBreakStmt(C0Parser::BreakStmtContext * ctx) {
+    antlr4::tree::ParseTree* loop_node = ctx->parent;
+    bool has_loop = false;
+    std::string jump_label = "";
+
+    while (loop_node) {
+        if (for_labels.get(loop_node).size() || while_labels.get(loop_node).size()) {// 有loop
+            has_loop = true;
+
+            if (for_labels.get(loop_node).size()) {
+                jump_label = for_labels.get(loop_node)[1];
+            }
+            else {
+                jump_label = while_labels.get(loop_node)[1];
+            }
+            break;
+        }
+        loop_node = loop_node->parent;
+    }
+    if (!has_loop) {
+        throw std::runtime_error("invaild break at line: "+std::to_string(ctx->getStart()->getLine()));
+    }
+    else {
+        ir.addIMC(jump_label, OP::GOTO, "0", "0");
+    }
+}
+

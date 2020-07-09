@@ -102,6 +102,8 @@ public:
 
 	void exitReturnStmt(C0Parser::ReturnStmtContext * /*ctx*/);
 
+	void enterBreakStmt(C0Parser::BreakStmtContext * /*ctx*/);
+
 };
 
 
