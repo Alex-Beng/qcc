@@ -841,6 +841,46 @@ void IRListener::MipsGen(std::string out_file) {
         head_addr += iter.first.length();
     }
 
+    // assign addr for func sym
+    for (auto& func_tab : sym_table.func_symbols) {
+        int t_addr = 0;
+        for (int p_cnt=0; p_cnt<sym_table.global_symbols[func_tab.first].length; p_cnt++) {
+            for (auto& iter : func_tab.second) {
+                if (iter.second.type == TYPE_PARAM && iter.second.length == p_cnt) {
+                    iter.second.addr = t_addr;
+                    t_addr += 4;
+                }
+            }
+        }
+        for (auto& iter : func_tab.second) {
+            if (iter.second.cls == CLS_CHAR && iter.second.type != TYPE_CONST) {
+                iter.second.addr = t_addr;
+                if (iter.second.type == TYPE_VAR) {
+                    t_addr += 1;
+                }
+                else {// array
+                    t_addr += iter.second.length;
+                }
+            }
+        }
+        // 对齐
+        t_addr += 4-t_addr&0x3;
+        for (auto& iter : func_tab.second) {
+            if (iter.second.cls == CLS_INT && iter.second.type != TYPE_CONST) {
+                iter.second.addr = t_addr;
+                if (iter.second.type == TYPE_VAR) {
+                    t_addr += 4;
+                }
+                else {// array
+                    t_addr += iter.second.length * 4;
+                }
+            }
+        }
+        func_addr_size[func_tab.first] = t_addr;
+    }
+
+    
+
 
 
     // 输出到文件，清空再输入（覆盖

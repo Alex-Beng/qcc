@@ -117,6 +117,9 @@ public:
 
 	// 起始地址
 	int head_addr;
+
+	// func addr len
+	std::map<std::string, int> func_addr_size;
 public:
 	// 直接gen
 	void MipsGen(std::string out_file);
