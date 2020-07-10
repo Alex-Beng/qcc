@@ -47,12 +47,13 @@ void main() {
         // for (j=0; j<10; j=j+1) {
             // a = func(1, 1, 1, 1);
             // if (a)
-                break;
+                // break;
+            continue;
         // }
     }
 
     while(a) {
-        break;
+        continue;
     }
     
     return ;

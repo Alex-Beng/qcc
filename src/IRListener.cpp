@@ -745,3 +745,49 @@ void IRListener::enterBreakStmt(C0Parser::BreakStmtContext * ctx) {
     }
 }
 
+void IRListener::enterContinueStmt(C0Parser::ContinueStmtContext * ctx) {
+    antlr4::tree::ParseTree* loop_node = ctx->parent;
+    bool has_loop = false;
+    std::string jump_label = "";
+
+    while (loop_node) {
+        if (for_labels.get(loop_node).size() || while_labels.get(loop_node).size()) {// 有loop
+            has_loop = true;
+
+            if (for_labels.get(loop_node).size()) {
+                jump_label = for_labels.get(loop_node)[0];
+            }
+            else {
+                jump_label = while_labels.get(loop_node)[0];
+            }
+            break;
+        }
+        loop_node = loop_node->parent;
+    }
+    // 寻找赋值语句
+    auto loop_children = loop_node->children;
+    bool has_ass = false;
+    IRCode ass_stmt;
+    
+    for (auto& child : loop_children) {
+        auto t_ass = for_step_ass.get(child);
+        if (t_ass.op == OP::ADD && t_ass.num1 == "0") {// 赋值鸭
+            has_ass = true;
+            ass_stmt.rst = t_ass.rst;
+            ass_stmt.op = t_ass.op;
+            ass_stmt.num1 = t_ass.num1;
+            ass_stmt.num2 = t_ass.num2;
+            break;
+        }
+    }
+
+    if (!has_loop) {
+        throw std::runtime_error("invaild break at line: "+std::to_string(ctx->getStart()->getLine()));
+    }
+    else {
+        if (has_ass)
+            ir.addIMC(ass_stmt.rst, ass_stmt.op, ass_stmt.num1, ass_stmt.num2);
+        ir.addIMC(jump_label, OP::GOTO, "0", "0");
+    }
+
+}
