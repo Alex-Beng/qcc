@@ -1,4 +1,4 @@
-#include "common_headers.h"
+#include "headers.h"
 
 #include <antlr4-runtime/antlr4-runtime.h>
 
@@ -62,6 +62,7 @@ int main(int argc, char const *argv[]) {
     std::ofstream symIRout("./out.log");
     ir_listener.ir.printIMC(symIRout);
     
+    ir_listener.MipsGen("./out.s");
 
     return 0;
 }

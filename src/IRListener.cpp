@@ -791,3 +791,62 @@ void IRListener::enterContinueStmt(C0Parser::ContinueStmtContext * ctx) {
     }
 
 }
+
+
+
+void IRListener::MipsGen(std::string out_file) {
+    // .data域
+    // 名字前面加_防名字冲突
+    mips_codes.push_back(".data");
+    // char and char array
+    for (auto& iter : sym_table.global_symbols) {
+        if (iter.second.type == TYPE_VAR && iter.second.cls == CLS_CHAR) {
+            mips_codes.push_back("_"+iter.first + " : .byte 0");
+            iter.second.addr = head_addr;
+            head_addr += 1;// 1 byte
+        }
+        else if (iter.second.type == TYPE_ARRAY && iter.second.cls == CLS_CHAR) {
+            mips_codes.push_back(
+                "_"+iter.first + " : .space "+std::to_string(iter.second.length)
+                );
+            iter.second.addr = head_addr;
+            head_addr += iter.second.length;
+        }
+    }
+    // int 32bit对齐
+    head_addr += 4-head_addr&0x3;
+    mips_codes.push_back(".align 2");
+
+    for (auto& iter : sym_table.global_symbols) {
+        if (iter.second.type == TYPE_VAR && iter.second.cls == CLS_INT) {
+            mips_codes.push_back(
+                "_"+iter.first + " : .word 0"
+                );
+            iter.second.addr = head_addr;
+            head_addr += 4; // 4 bytes
+        }
+        else if (iter.second.type == TYPE_ARRAY && iter.second.cls == CLS_INT) {
+            mips_codes.push_back(
+                "_"+iter.first + " : .space "+std::to_string(iter.second.length*4)
+                );
+            iter.second.addr = head_addr;
+            head_addr += iter.second.length*4;
+        }
+    }
+    // str
+    for (auto& iter : sym_table.str_symbols) {
+        mips_codes.push_back(
+            "string_"+std::to_string(iter.second) + " : .asciiz " + iter.first + "\""
+            );
+        head_addr += iter.first.length();
+    }
+
+
+
+    // 输出到文件，清空再输入（覆盖
+    std::ofstream out(out_file, std::ios::trunc);
+    for (auto& ins : mips_codes) {
+        out<<ins<<std::endl;
+    }
+    out.close();
+}

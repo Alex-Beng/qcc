@@ -1,12 +1,13 @@
 #ifndef IRLISTENER_H
 #define IRLISTENER_H
 
-#include "common_headers.h"
+#include "headers.h"
 
 #include "generated/C0BaseListener.h"
 
 #include "SymTable.h"
 #include "IR.h"
+#include "OC.h"
 
 
 class IRListener : public C0BaseListener {
@@ -45,6 +46,8 @@ public:
 
 		sym_table.addSym("", "true", CLS_INT, TYPE_CONST, 1, 0);
 		sym_table.addSym("", "false", CLS_INT, TYPE_CONST, 0, 0);
+
+		head_addr = MIPS::data_origin;
 	}
 	
     void enterFunctionDefinition(C0Parser::FunctionDefinitionContext * /*ctx*/);
@@ -106,6 +109,31 @@ public:
   	
 	void enterContinueStmt(C0Parser::ContinueStmtContext * /*ctx*/);
 
+
+	// ↓↓↓目标代码生成↓↓↓
+public:
+	// 生成的目标代码
+	std::vector<std::string> mips_codes;
+
+	// 起始地址
+	int head_addr;
+public:
+	// 直接gen
+	void MipsGen(std::string out_file);
+
+	void MipsFuncBegin(IRCode);
+	void MipsLabel(IRCode);
+	void MipsExit(IRCode);
+	void MipsGoto(IRCode);
+	void MipsPush(IRCode);
+	void MipsCall(IRCode);
+	void MipsReturn(IRCode);
+	void MipsCmp(IRCode);
+	void MipsCalc(IRCode);
+	void MipsSaveArr(IRCode);
+	void MipsReadArr(IRCode);
+	void MipsScanf(IRCode);
+	void MipsPrintf(IRCode);
 };
 
 

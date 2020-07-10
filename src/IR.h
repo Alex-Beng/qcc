@@ -4,7 +4,7 @@
 #ifndef IR_H
 #define IR_H
 
-#include "common_headers.h"
+#include "headers.h"
 
 
 struct IRCode{
@@ -55,6 +55,7 @@ namespace OP {
 }
 
 class IR {
+public:
     std::vector<IRCode> ir_codes;
 
     int temp_var_cnt;

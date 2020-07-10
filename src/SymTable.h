@@ -1,7 +1,7 @@
 #ifndef SYMTABLE_H
 #define SYMTABLE_H
 
-#include "common_headers.h"
+#include "headers.h"
 
 enum {CLS_INT, CLS_CHAR, CLS_VOID, CLS_STR};
 enum {TYPE_CONST, TYPE_VAR, TYPE_ARRAY, TYPE_FUNC, TYPE_PARAM};
@@ -11,13 +11,14 @@ struct VarInfo {
 	int cls;		// class: int char void
 	int type;		// type: const var array fun param
 	int length;		// const->value []->length, func->num_of_params
-	int def_line;	// Line No. of def of IDEN
-	int addr = -1;		// addr of IDEN
+	int def_line;	// Line No.
+	int addr = -1;		// addr （用于RAM分配空间
 	std::string name;
 };
 
 //　符号表 
 class SymbolTable {
+public:
     std::map<std::string, VarInfo> global_symbols;
 	std::map<std::string, std::map<std::string, VarInfo>> func_symbols;
 	std::map<std::string, int> str_symbols;
@@ -33,7 +34,6 @@ public:
 
 	void addSym(std::string curFunc, std::string namae, int _class, int type, int length, int line);
 	int addStr(std::string &s);
-	// void printSym(std::ofstream&o);
 };
 
 
