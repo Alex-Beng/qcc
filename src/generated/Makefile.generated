@@ -1,9 +1,0 @@
-CPP := g++
-
-FLAGS := -I/usr/local/include/antlr4-runtime -std=c++11 -I../generated -L/usr/local/lib/ -lantlr4-runtime
-
-GENERATED_FILES := ./generated/C0BaseListener.cpp  ./generated/C0Lexer.cpp     ./generated/C0Parser.cpp   ./generated/CLexer.cpp ./generated/C0BaseVisitor.cpp   ./generated/C0Listener.cpp  ./generated/C0Visitor.cpp
-
-C0BaseListener.o : C0BaseListener.cpp
-    $(CPP) C0BaseListener.cpp $(FLAGS) -c -o C0BaseListener.o
-

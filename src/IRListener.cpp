@@ -204,6 +204,16 @@ void IRListener::exitAssignExpr(C0Parser::AssignExprContext * ctx) {
             rhs = t_v;
         }
     }
+    else if (rhs_varinfo && rhs_varinfo->type == TYPE_CONST) {
+        if (rhs_varinfo->cls == CLS_CHAR) {
+            rhs = "\'";
+            rhs.push_back((char)rhs_varinfo->length);
+            rhs += "\'";
+        }
+        else if (rhs_varinfo->cls == CLS_INT) {
+            rhs = std::to_string(rhs_varinfo->length);
+        }
+    }
     else if (rhs_varinfo==NULL) { // 字面量
         ;
     }
@@ -235,10 +245,10 @@ void IRListener::exitLiteralExpr(C0Parser::LiteralExprContext * ctx) {
         temp_var.put(ctx, ctx->DecimalInteger()->getText());
     }
     else if (ctx->lite->getType() == C0Lexer::CharLiteral) {
-        int var_val = ctx->CharLiteral()->getText()[1];
+        std::string var_val = ctx->CharLiteral()->getText();
 
         temp_cls.put(ctx, CLS_CHAR);
-        temp_var.put(ctx, std::to_string(var_val));
+        temp_var.put(ctx, var_val);
     }
     else if (ctx->lite->getType() == C0Lexer::StringLiteral){
         // add to sym table
@@ -257,8 +267,21 @@ void IRListener::exitVariableExpr(C0Parser::VariableExprContext * ctx) {
     if (t_varinfo == nullptr) {
         throw std::runtime_error("can't find defination of "+ctx->Identifier()->getText()+" at line: "+std::to_string(ctx->getStart()->getLine()));
     }
-        
+
     temp_cls.put(ctx, t_varinfo->cls);
+
+    if (t_varinfo->type == TYPE_CONST) {// 转字面量
+        if (t_varinfo->cls == CLS_INT) {
+            temp_var.put(ctx, std::to_string(t_varinfo->length));
+            return ;
+        }
+        else if (t_varinfo->cls == CLS_CHAR) {
+            std::stringstream t_ss;
+            t_ss<<"\'"<<(char)t_varinfo->length<<"\'";
+            temp_var.put(ctx, t_ss.str());
+            return;
+        }
+    }
     temp_var.put(ctx, t_varinfo->name);
 }
 
@@ -483,7 +506,7 @@ void IRListener::exitIfCondition(C0Parser::IfConditionContext * ctx) {
     auto t_var = temp_var.get(ctx->expression());
 
     if (t_var == "") {
-        // 说明是binaryExpr,　跳转在exitExpr中
+        // 说明是binaryExpr, 跳转在exitExpr中
     }
     else {
         ir.addIMC(labels[0], OP::EQU, t_var, "0");
@@ -520,7 +543,7 @@ void IRListener::exitWhileCondition(C0Parser::WhileConditionContext * ctx) {
     auto t_var = temp_var.get(ctx->expression());
 
     if (t_var == "") {
-        // 说明是binaryExpr,　跳转在exitExpr中
+        // 说明是binaryExpr, 跳转在exitExpr中
     }
     else {
         ir.addIMC(labels[1], OP::EQU, t_var, "0");
@@ -560,7 +583,7 @@ void IRListener::exitForCondition(C0Parser::ForConditionContext * ctx) {
     auto t_var = temp_var.get(ctx->expression());
 
     if (t_var == "") {
-        // 说明是binaryExpr,　跳转在exitExpr中
+        // 说明是binaryExpr, 跳转在exitExpr中
     }
     else {
         ir.addIMC(labels[1], OP::EQU, t_var, "0");
@@ -588,7 +611,9 @@ void IRListener::enterFuncallExpr(C0Parser::FuncallExprContext * ctx) {
     // std::cout<<param_num<<'\n';
     // 当前scope查找func
     auto func_info = sym_table.lookup(curr_func, func_name, false);
-
+    if (!func_info) {
+        throw std::runtime_error("undefine funct at line"+std::to_string(ctx->getStart()->getLine()));
+    }
     if (func_info->type != TYPE_FUNC) {
         throw std::runtime_error("expecting func type at line: "+std::to_string(ctx->getStart()->getLine()));
     }
@@ -641,6 +666,14 @@ void IRListener::exitPrintfExpr(C0Parser::PrintfExprContext * ctx) {
         auto expr = ctx->expressionList()->expression()[i];
         auto expr_cls = temp_cls.get(expr);
         auto expr_var = temp_var.get(expr);
+
+        auto expr_info = sym_table.lookup(curr_func, expr_var, false);
+        if (expr_info && expr_info->type == TYPE_ARRAY) {
+            auto t_v = ir.gen_temp(curr_func, ctx->getStop()->getLine(), expr_info->cls, sym_table);
+            auto expr_idx = temp_idx.get(expr);
+            ir.addIMC(t_v, OP::READ_ARR, expr_var, expr_idx);
+            expr_var = t_v;
+        }
 
         if (expr_cls == CLS_STR) {
             ir.addIMC("str", OP::PRINT, OP::STR_HEAD+expr_var, "0");
@@ -714,7 +747,7 @@ void IRListener::exitReturnStmt(C0Parser::ReturnStmtContext * ctx) {
     if (curr_func == "main")
         ir.addIMC("0", OP::EXIT, "0", "0");
     else
-        ir.addIMC("0", OP::EXIT, "0", "0");
+        ir.addIMC("0", OP::RET, "0", "0");
 
 }
 
@@ -795,6 +828,8 @@ void IRListener::enterContinueStmt(C0Parser::ContinueStmtContext * ctx) {
 
 
 void IRListener::MipsGen(std::string out_file) {
+    curr_func = "";
+
     // .data域
     // 名字前面加_防名字冲突
     mips_codes.push_back(".data");
@@ -836,7 +871,7 @@ void IRListener::MipsGen(std::string out_file) {
     // str
     for (auto& iter : sym_table.str_symbols) {
         mips_codes.push_back(
-            "string_"+std::to_string(iter.second) + " : .asciiz " + iter.first + "\""
+            "string_"+std::to_string(iter.second) + " : .asciiz " + iter.first
             );
         head_addr += iter.first.length();
     }
@@ -876,17 +911,693 @@ void IRListener::MipsGen(std::string out_file) {
                 }
             }
         }
-        func_addr_size[func_tab.first] = t_addr;
+        func_frame_size[func_tab.first] = t_addr;
     }
 
+    mips_codes.push_back(".text");
+    mips_codes.push_back(".globl main");
+    mips_codes.push_back("j main");
+
+    for (auto i=ir.ir_codes.begin(); i!=ir.ir_codes.end(); i++) {
+        auto ins = *i;
     
+        if (ins.op == OP::FUNC_BEGIN) {
+            MipsFuncBegin(ins);
+        }
+        else if (ins.op == OP::LABEL) {
+            MipsLabel(ins);
+        }
+        else if (ins.op == OP::EXIT) {
+            MipsExit(ins);
+        }
+        else if (ins.op == OP::GOTO) {
+            MipsGoto(ins);
+        }
+        else if (ins.op == OP::PUSH_PARA) {
+            MipsPush(ins, i);
+        }
+        else if (ins.op == OP::CALL) {
+            MipsCall(ins);
+        } 
+        else if (ins.op == OP::FUNC_END || ins.op == OP::RET) {
+            MipsReturn(ins);
+        }
+        else if (ins.op == OP::EQU || ins.op == OP::NEQ
+              || ins.op == OP::GRT || ins.op == OP::GREQ
+              || ins.op == OP::LES || ins.op == OP::LESEQ   ) {
+            MipsCmp(ins, i);
+        }
+        else if (ins.op == OP::ADD || ins.op == OP::SUB
+              || ins.op == OP::MUL || ins.op == OP::DIV) {
+            MipsCalc(ins, i);
+        }
+        else if (ins.op == OP::SAVE_ARR) {
+            MipsSaveArr(ins, i);
+        }
+        else if (ins.op == OP::READ_ARR) {
+            MipsReadArr(ins, i);
+        }
+        else if (ins.op == OP::SCAN) {
+            MipsScanf(ins);
+        }
+        else if (ins.op == OP::PRINT) {
+            MipsPrintf(ins, i);
+        }
+        else {
+            throw std::runtime_error("unexpect ir op");
+        }
 
+    }
 
-
+    mips_codes.push_back("exit:");
     // 输出到文件，清空再输入（覆盖
     std::ofstream out(out_file, std::ios::trunc);
+    
+    bool out_tab = false;
     for (auto& ins : mips_codes) {
+        if (ins == ".text") {
+            out_tab = true;
+            out<<ins<<std::endl;
+            continue;
+        }
+        if (out_tab && ins!=".globl main" && ins.find(':')==-1) {
+            out<<'\t';
+        }
         out<<ins<<std::endl;
     }
     out.close();
+}
+
+void IRListener::MipsFuncBegin(IRCode& c) {
+    if (c.rst == "main") {
+        mips_codes.push_back(c.rst+":");
+    }
+    else {
+        mips_codes.push_back("func_"+c.rst+":");
+    }
+    curr_func = c.rst;
+
+    run_info.init(sym_table.func_symbols[curr_func]);
+}
+
+void IRListener::MipsLabel(IRCode& c) {
+    auto lab = c.rst.erase(0, 1);
+    mips_codes.push_back("label"+lab + ":");
+}
+
+void IRListener::MipsExit(IRCode& c) {
+    mips_codes.push_back("j exit");
+}
+
+void IRListener::MipsGoto(IRCode& c) {
+    mips_codes.push_back("j "+mark2label(c.rst));
+}
+
+void IRListener::MipsPush(IRCode& c, std::vector<IRCode>::iterator& o) {
+    // 帧中offset
+    int offset;
+    if (ParaInfoStack.empty()) {
+        offset = mips_getFrameSize();
+    }
+    else {
+        offset = ParaInfoStack.top().offset + 4;
+    }
+
+    int value;
+    auto is_literal = mips_isLiteral(c.num1, value);
+
+    // 需要先存到reg
+    std::string save_reg;
+
+    if (is_literal) {
+        save_reg = MIPS::T9;
+        std::stringstream ss;
+        ss<<MIPS::LI<<" "<<MIPS::T9<<" "<<value;
+        mips_codes.push_back(ss.str());
+    }
+    else {
+        // 在寄存器中找一个先放着
+        save_reg = mips_seekReg(c.num1, true);
+        mips_checkRegUse(c.num1, save_reg, o);
+    }
+    // 保存现场
+    std::stringstream ss;
+    ss<<MIPS::SW<<" "<<save_reg<<" -"<<offset<<" ("<<MIPS::SP<<")";
+    mips_codes.push_back(ss.str());
+
+    ParaInfo t;
+    t.func_name = c.rst;
+    t.offset = offset;
+    ParaInfoStack.push(t);
+}   
+
+void IRListener::MipsCall(IRCode& c) {
+    std::string func_name = c.rst;
+    auto last_push_offset = 0;
+    if (ParaInfoStack.empty()) {
+        last_push_offset = mips_getFrameSize() - 4;
+    }
+    else {
+        last_push_offset = ParaInfoStack.top().offset;
+    }
+    auto stack_ptr = last_push_offset+4 
+        - sym_table.global_symbols[func_name].length*4 
+        + func_frame_size[func_name];
+    for (auto i=0; i<17; i++) {
+        if (run_info.reg_used[i]) {
+            std::stringstream ss;
+            ss<<MIPS::SW<<" "<<idx2reg(i)<<" -"<<stack_ptr<<" ("<<MIPS::SP<<")";
+            mips_codes.push_back(ss.str());
+
+            stack_ptr += 4;
+        }
+    }
+    stack_ptr = last_push_offset+4 
+        - sym_table.global_symbols[func_name].length*4 
+        + func_frame_size[func_name]
+        + 4 * (17);
+    
+    std::stringstream ss;
+    ss<<MIPS::SW<<" "<<MIPS::RA<<" -"<<stack_ptr<<" ("<<MIPS::SP<<")";
+    mips_codes.push_back(ss.str());
+
+    stack_ptr += 4;
+    
+    for (auto i=0; i<sym_table.global_symbols[func_name].length; i++) {
+        assert(ParaInfoStack.top().func_name == func_name);
+        ParaInfoStack.pop();
+    }
+
+    int sp_change = 0;
+    if (ParaInfoStack.empty()) {
+        sp_change = mips_getFrameSize();
+    }
+    else {
+        sp_change = ParaInfoStack.top().offset + 4;
+    }
+
+    ss.str("");
+    ss<<MIPS::ADDI<<" "<<MIPS::SP<<" "<<MIPS::SP<<" "<<(-1*sp_change);
+    mips_codes.push_back(ss.str());
+
+    ss.str("");
+    ss<<MIPS::JAL<<" "<<mark2func(c.rst);
+    mips_codes.push_back(ss.str());
+
+    ss.str("");
+    ss<<MIPS::ADDI<<" "<<MIPS::SP<<" "<<MIPS::SP<<" "<<sp_change;
+    mips_codes.push_back(ss.str());
+
+    stack_ptr -= 4;
+    
+    ss.str("");
+    ss<<MIPS::LW<<" "<<MIPS::RA<<" -"<<stack_ptr<<" ("<<MIPS::SP<<")";
+    mips_codes.push_back(ss.str());
+
+    stack_ptr = last_push_offset+4 
+        - sym_table.global_symbols[func_name].length*4 
+        + func_frame_size[func_name];
+    
+    for (auto i=0; i<17; i++) {
+        if (run_info.reg_used[i]) {
+            ss.str("");
+            ss<<MIPS::LW<<" "<<idx2reg(i)<<" -"<<stack_ptr<<" ("<<MIPS::SP<<")";
+            mips_codes.push_back(ss.str());
+
+            stack_ptr += 4;
+        }
+    }
+}
+
+void IRListener::MipsReturn(IRCode& c) {
+    if (c.op == OP::FUNC_END) {
+        curr_func = "";
+    }
+    std::stringstream ss;
+    ss<<MIPS::JR<<" "<<MIPS::RA;
+    mips_codes.push_back(ss.str());
+}
+
+void IRListener::MipsCmp(IRCode& c, std::vector<IRCode>::iterator& o) {
+    auto cop = c.op;
+	auto r1 = c.num1, r2 = c.num2;
+
+    int v1, v2;
+    bool r1_literal = mips_isLiteral(c.num1, v1);
+    bool r2_literal = mips_isLiteral(c.num2, v2);
+
+    std::string r1_reg, r2_reg;
+
+    std::stringstream ss;
+    if (cop == OP::EQU || cop == OP::NEQ) {
+        bool is_beq = (cop == OP::EQU);
+        if (r1_literal && r2_literal) {// 都为字面量
+            bool eq = (v1 == v2);
+            if ((is_beq&&eq) || (!is_beq&&!eq)) {// 可直接跳转
+                ss<<MIPS::J<<" "<<mark2label(c.rst);
+            }
+            else {// 不跳就跳过，谐音梗扣分
+                ;
+            }
+        }
+        else if (!r1_literal && r2_literal) {
+            r1_reg = mips_seekReg(r1, true);
+            ss<<(is_beq? MIPS::BEQ : MIPS::BNE)
+              <<" "<<r1_reg<<" "<<v2<<" "<<mark2label(c.rst);
+        }
+        else if (r1_literal && !r2_literal) {
+            r2_reg = mips_seekReg(r2, true);
+            ss<<(is_beq? MIPS::BEQ : MIPS::BNE)
+              <<" "<<r2_reg<<" "<<v1<<" "<<mark2label(c.rst);
+        }
+        else if (!r1_literal && r2_literal) {
+            r1_reg = mips_seekReg(r1, true);
+            r2_reg = mips_seekReg(r2, true);
+            ss<<(is_beq? MIPS::BEQ : MIPS::BNE)
+              <<" "<<r1_reg<<" "<<r2_reg<<" "<<mark2label(c.rst);
+        }
+    }
+    else {
+        if (r1_literal && r2_literal) {
+
+			if((cop == OP::GRT && v1 > v2) ||
+            (cop == OP::GREQ && v1 >= v2) ||
+            (cop == OP::LES && v1 < v2) ||
+            (cop == OP::LESEQ && v1 <= v2))
+				ss << MIPS::J << " " << mark2label(c.rst);
+        }
+        else if (!r1_literal & r2_literal) {
+            r1_reg = mips_seekReg(r1, true);
+            if (v2==0) {
+                auto t_op = cop == OP::GRT ? MIPS::BGTZ :
+					cop == OP::GREQ ? MIPS::BGEZ :
+					cop == OP::LES ? MIPS::BLTZ : MIPS::BLEZ;
+                ss << t_op << " " << r1_reg << " " << mark2label(c.rst);
+            }
+            else {
+                auto t_op = cop == OP::GRT ? MIPS::BGT :
+					cop == OP::GREQ ? MIPS::BGE :
+					cop == OP::LES ? MIPS::BLT : MIPS::BLE;
+                ss << t_op << " " << r1_reg << " " << v2 << " " << mark2label(c.rst);
+            }
+        }
+        else if (r1_literal && !r2_literal) {
+            r2_reg = mips_seekReg(r2, true);
+            if (v1==0) {
+                auto t_op = cop == OP::GRT ? MIPS::BLTZ :
+					cop == OP::GREQ ? MIPS::BLEZ :
+					cop == OP::LES ? MIPS::BGTZ : MIPS::BGEZ;
+				ss << t_op << " " << r2_reg << " " << mark2label(c.rst);
+            }
+            else {
+                auto t_op = cop == OP::GRT ? MIPS::BLT :
+					cop == OP::GREQ ? MIPS::BLE :
+					cop == OP::LES ? MIPS::BGT : MIPS::BGE;
+				ss << t_op << " " << r2_reg << " " << v1 << " " << mark2label(c.rst);
+            }
+        }
+        else if (!r1_literal && !r2_literal) {
+            r1_reg = mips_seekReg(r1, true);
+            r2_reg = mips_seekReg(r2, true);
+            auto t_op = cop == OP::GRT ? MIPS::BGT :
+				cop == OP::GREQ ? MIPS::BGE :
+				cop == OP::LES ? MIPS::BLT : MIPS::BLE;
+            ss << t_op << " " << r1_reg << " " << r2_reg << " " << mark2label(c.rst);
+        }
+    }
+    mips_codes.push_back(ss.str());
+
+    if (!r1_literal) {
+        mips_checkRegUse(r1, r1_reg, o);
+    }
+    if (!r2_literal) {
+        mips_checkRegUse(r2, r2_reg, o);
+    }
+}
+
+void IRListener::MipsCalc(IRCode& c, std::vector<IRCode>::iterator& o) {
+    auto cop = c.op;
+	auto r1 = c.num1, r2 = c.num2;
+
+    int v1, v2;
+    bool r1_literal = mips_isLiteral(c.num1, v1);
+    bool r2_literal = mips_isLiteral(c.num2, v2);
+
+    std::string r1_reg, r2_reg;
+
+    std::stringstream ss;
+    if(c.rst == MIPS::RETV0) {// 返回时候的赋值
+        if (r1_literal) {
+            ss << MIPS::LI << " " << MIPS::V0 << " " << v1;
+        }
+        else {
+            r1_reg = mips_seekReg(r1, true);
+            ss << MIPS::MOVE << " " << MIPS::V0 << " " << r1_reg;
+            mips_checkRegUse(r1, r1_reg, o);
+        }
+        mips_codes.push_back(ss.str());
+        return ;
+    }
+    
+    std::string rd_reg;
+    if (r1 == MIPS::RETV0) {
+        rd_reg = mips_seekReg(c.rst, false);
+        ss << MIPS::MOVE << " " << rd_reg << " " << MIPS::V0;
+        mips_codes.push_back(ss.str());
+        return ;
+    }
+
+    if (r1_literal && r2_literal) {
+        int val =
+			c.op == OP::ADD ? v1 + v2 :
+			c.op == OP::SUB ? v1 - v2 :
+			c.op == OP::MUL ? v1 * v2 :
+			c.op == OP::DIV ? v1 / v2 : 0;
+        rd_reg = mips_seekReg(c.rst, false);
+        if (val == 0) {
+            ss << MIPS::ADD << " " << rd_reg << " " << MIPS::ZERO << " " << MIPS::ZERO;
+        }
+        else {
+            ss << MIPS::LI << " " << rd_reg << " " << val;
+        }
+        mips_codes.push_back(ss.str());
+    }
+    else if (!r1_literal && !r2_literal) {
+        r1_reg = mips_seekReg(r1, true);
+        r2_reg = mips_seekReg(r2, true);
+        rd_reg = mips_seekReg(c.rst, false);
+        auto t_op = 
+            cop == OP::ADD ? MIPS::ADD :
+			cop == OP::SUB ? MIPS::SUB :
+			cop == OP::MUL ? MIPS::MUL : MIPS::DIV;
+        ss << t_op << " " << rd_reg << " " << r1_reg << " " << r1_reg; 
+        mips_codes.push_back(ss.str());
+    }
+    else if (r1_literal && !r2_literal) {
+        r2_reg = mips_seekReg(r2, true);
+        if (v1==0) {
+            rd_reg = mips_seekReg(c.rst, false);
+            if (cop == OP::ADD) {
+                ss << MIPS::MOVE << " " << rd_reg << " " <<r2_reg;
+            }
+            else if (cop == OP::SUB) {
+                ss << MIPS::SUB << " " << rd_reg << " " << MIPS::ZERO << " " << r2_reg;
+            }
+            else if (cop == OP::MUL || cop == OP::DIV) {
+                ss << MIPS::MOVE << " " << rd_reg << " " << MIPS::ZERO;
+            }
+            else {
+                assert(false);
+            }
+            mips_codes.push_back(ss.str());
+        }
+        else {
+            rd_reg = mips_seekReg(c.rst, false);
+            if (cop == OP::ADD) {
+                ss << MIPS::ADD << " " << rd_reg << " " << r2_reg << " " << v1;
+            }
+            else if (cop == OP::SUB) {
+                ss << MIPS::SUB << " " << MIPS::T9 << " " << r2_reg << " " << v1;
+                mips_codes.push_back(ss.str());
+
+                ss.str("");
+                ss << MIPS::SUB << " " << rd_reg << " " << MIPS::ZERO << " " << MIPS::T9;
+            }
+            else if (cop == OP::MUL) {
+                ss << MIPS::MUL << " " << rd_reg << " " << r2_reg << " " << v1;
+            }
+            else if (cop == OP::DIV) {
+                ss << MIPS::LI << " " << MIPS::T9 << " " << v1; 
+                mips_codes.push_back(ss.str());
+
+                ss.str();
+                ss << MIPS::DIV << " " << rd_reg << " " << MIPS::T9 << " " << r2_reg;
+            }
+            else {
+                assert(false);
+            }
+            mips_codes.push_back(ss.str());
+        }
+    }
+    else if (!r1_literal && r2_literal) {
+        r1_reg = mips_seekReg(r1, true);
+        if (v2 == 0) {
+            rd_reg = mips_seekReg(c.rst, false);
+            if (cop==OP::ADD || cop==OP::SUB) {
+                ss << MIPS::MOVE << " " << rd_reg << " " <<r1_reg;
+            }
+            else if (cop == OP::MUL || cop == OP::DIV) {
+                ss << MIPS::MOVE << " " << rd_reg << " " << MIPS::ZERO;
+            }
+            else {
+                assert(false);
+            }
+            mips_codes.push_back(ss.str());
+        }
+        else {
+            rd_reg = mips_seekReg(c.rst, false);
+            auto t_op = 
+                c.op == OP::ADD ? MIPS::ADD :
+				c.op == OP::SUB ? MIPS::SUB :
+				c.op == OP::MUL ? MIPS::MUL : MIPS::DIV;
+            ss << t_op << " " << rd_reg << " " << r1_reg << " " << v2;
+            mips_codes.push_back(ss.str());
+        }
+    }
+    else {
+        assert(false);
+    }
+    mips_writeRam(c.rst, rd_reg);
+    if (!r1_literal)
+        mips_checkRegUse(c.num1, r1_reg, o);
+    if (!r2_literal)
+        mips_checkRegUse(c.num2, r2_reg, o);
+
+}
+
+void IRListener::MipsSaveArr(IRCode& c, std::vector<IRCode>::iterator& o) {
+    auto arr = c.rst;
+    auto index = c.num1;
+    auto value = c.num2;
+
+    std::stringstream ss;
+
+    VarInfo arr_info;
+    bool local = false;
+    int idx, val;
+
+    bool idx_literal = mips_isLiteral(index, idx);
+    bool val_literal = mips_isLiteral(value, val);
+
+    if (run_info.sym_tab.count(arr) > 0) {
+        arr_info = run_info.sym_tab[arr];
+        local = true;
+    }
+    else {
+        assert(sym_table.global_symbols.count(arr) > 0);
+        arr_info = sym_table.global_symbols[arr];
+    }
+    assert(arr_info.type == TYPE_ARRAY);
+    int element_size = 1;
+    std::string save_op = MIPS::SB;
+    if (arr_info.cls == CLS_INT) {
+        element_size = 4;
+        save_op = MIPS::SW;
+    }
+    else {
+        assert(arr_info.cls == CLS_CHAR);
+    }
+
+    std::string idx_reg, val_reg;
+    if (val_literal) {
+        ss << MIPS::LI << " " << MIPS::T9 << " " << val;
+        mips_codes.push_back(ss.str());
+        ss.str("");
+        val_reg = MIPS::T9;
+    }
+    else {
+        val_reg = mips_seekReg(value, true);
+    }
+
+    if (local) {
+        if (idx_literal) {
+            ss << save_op << " " << val_reg << " "
+               << -1*(idx*element_size + arr_info.addr) << " (" << MIPS::SP << ")";
+            mips_codes.push_back(ss.str());
+        }
+        else {
+            idx_reg = mips_seekReg(index, true);
+            if (element_size > 1) { // int
+                ss << MIPS::SLL << " " << MIPS::T8 << " " << idx_reg << " " << int(log2(element_size));
+                mips_codes.push_back(ss.str());
+                ss.str("");
+
+                ss << MIPS::ADDI << " " << MIPS::T8 << " " << MIPS::T8 << " " << arr_info.addr;
+                mips_codes.push_back(ss.str());
+                ss.str("");
+            }
+            else {
+                ss << MIPS::ADDI << " " << MIPS::T8 << " " << idx_reg << " " << arr_info.addr;
+                mips_codes.push_back(ss.str());
+                ss.str("");
+            }
+            ss << MIPS::SUB << " " << MIPS::T8 << " " << MIPS::SP << " " << MIPS::T8;
+            mips_codes.push_back(ss.str());
+            ss.str("");
+
+            ss << save_op << " " << val_reg << " " << " ("<<MIPS::T8<<")";
+            mips_codes.push_back(ss.str());
+            ss.str("");
+        }
+    }
+    else {
+        if (idx_literal) {
+            ss << save_op << " " << val_reg << " " << mark2gvar(arr) << "+" << idx*element_size;
+            mips_codes.push_back(ss.str());
+        }
+        else {
+            idx_reg == mips_seekReg(index, true);
+            if (element_size > 1) {
+                ss << MIPS::SLL << " " << MIPS::T8 << " " << idx_reg << " " << int(log2(element_size));
+                mips_codes.push_back(ss.str());
+                ss.str("");
+            }
+            ss << save_op << " " << val_reg << " " << mark2gvar(arr) << " ("<<(element_size>1? MIPS::T8:idx_reg)<<")";
+            mips_codes.push_back(ss.str());
+            ss.str("");
+        }
+    }
+    if (!idx_literal) {
+        mips_checkRegUse(index, idx_reg, o);
+    }
+    if (!val_literal) {
+        mips_checkRegUse(value, val_reg, o);
+    }
+}
+
+void IRListener::MipsReadArr(IRCode& c, std::vector<IRCode>::iterator& o) {
+    auto arr = c.num1;
+    auto index = c.num2;
+    auto dst = c.rst;
+
+    VarInfo arr_info;
+    bool local = false;
+    int idx;
+
+    bool idx_literal = mips_isLiteral(index, idx);
+    std::string idx_reg;
+    if (run_info.sym_tab.count(arr) > 0) {
+        arr_info = run_info.sym_tab[arr];
+        local = true;
+    }
+    else {
+        assert(sym_table.global_symbols.count(arr) > 0);
+        arr_info = sym_table.global_symbols[arr];
+    }
+
+    assert(arr_info.type == TYPE_ARRAY);
+    int element_size = 1;
+    if (arr_info.cls == CLS_INT) {
+        element_size = 4;
+    }
+    else {
+        assert(arr_info.cls == CLS_CHAR);
+    }
+
+    std::string rd_reg;
+    std::stringstream ss;
+    if (local) {
+
+        if (idx_literal) {
+            rd_reg = mips_seekReg(dst, false);
+            ss << (arr_info.cls == CLS_INT? MIPS::LW:MIPS::LBU) 
+               << " " << rd_reg << " -" << arr_info.addr + idx*element_size << "("<<MIPS::SP<<")";
+        }
+        else {
+            idx_reg = mips_seekReg(index, true);
+            rd_reg = mips_seekReg(dst, false);
+            if (arr_info.cls == CLS_INT) {
+                ss<<MIPS::SLL<<" "<<MIPS::T9<<" "<<idx_reg<<" "<<2; mips_codes.push_back(ss.str());ss.str("");
+                ss<<MIPS::ADDI<<" "<<MIPS::T9<<" "<<MIPS::T9<<" "<<arr_info.addr; mips_codes.push_back(ss.str());ss.str("");
+                ss<<MIPS::SUB<<" "<<MIPS::T9<<" "<<MIPS::SP<<" "<<MIPS::T9;mips_codes.push_back(ss.str());ss.str("");
+                ss<<MIPS::LW<<" "<<rd_reg<<" ("<<MIPS::T9<<")";mips_codes.push_back(ss.str());ss.str("");
+            }
+            else {
+                ss<<MIPS::ADDI<<" "<<MIPS::T9<<" "<<idx_reg<<" "<<arr_info.addr;mips_codes.push_back(ss.str());ss.str("");
+                ss<<MIPS::SUB<<" "<<MIPS::T9<<" "<<MIPS::SP<<" "<<MIPS::T9;mips_codes.push_back(ss.str());ss.str("");
+                ss<<MIPS::LBU<<" "<<rd_reg<<" ("<<MIPS::T9<<")";mips_codes.push_back(ss.str());ss.str("");
+            }
+        }
+    }
+    else {
+
+        if (idx_literal) {
+            rd_reg = mips_seekReg(dst, false);
+            ss<<(arr_info.cls==CLS_INT? MIPS::LW:MIPS::LBU)
+              <<" "<<rd_reg<<" "<<mark2gvar(arr)<<"+"<<idx*element_size;
+            mips_codes.push_back(ss.str());
+        }
+        else {
+            idx_reg = mips_seekReg(index, true);
+            rd_reg = mips_seekReg(dst, false);
+            if (arr_info.cls==CLS_INT) {
+                ss<<MIPS::SLL<<" "<<MIPS::T9<<" "<<idx_reg<<" "<<2;mips_codes.push_back(ss.str());ss.str("");
+                ss<<MIPS::LW<<" "<<rd_reg<<" "<<mark2gvar(arr)<<"("<<MIPS::T9<<")";mips_codes.push_back(ss.str());ss.str("");
+            }
+            else {
+                ss<<MIPS::LBU<<" "<<rd_reg<<" "<<mark2gvar(arr)<<"("<<idx_reg<<")";mips_codes.push_back(ss.str());ss.str("");
+            }
+        }
+    }
+    mips_writeRam(c.rst, rd_reg);
+
+    if (!idx_literal)
+        mips_checkRegUse(index, idx_reg, o);
+}
+
+void IRListener::MipsScanf(IRCode& c) {
+    std::stringstream ss;
+    if (c.rst == "int") {
+        ss<<MIPS::LI<<" "<<MIPS::V0<<" "<<5;
+    }
+    else {
+        assert(c.rst == "char");
+        ss<<MIPS::LI<<" "<<MIPS::V0<<" "<<12;
+    }
+    mips_codes.push_back(ss.str());ss.str("");
+
+    ss<<"syscall";
+    mips_codes.push_back(ss.str());ss.str("");
+
+    auto reg = mips_seekReg(c.num1, false);
+    ss << MIPS::MOVE<<" "<<reg<<" "<<MIPS::V0;
+    mips_codes.push_back(ss.str());
+    mips_writeRam(c.num1, reg);
+}
+
+void IRListener::MipsPrintf(IRCode& c, std::vector<IRCode>::iterator& o) {
+    std::stringstream ss;
+    if (c.rst=="int" || c.rst=="char") {
+        int val;
+        bool is_literal;
+        ss<<MIPS::LI<<" "<<MIPS::V0<<" "<<(c.rst=="int"? 1:11);mips_codes.push_back(ss.str());ss.str("");
+        is_literal = mips_isLiteral(c.num1, val);
+        if (is_literal) {
+            ss<<MIPS::LI<<" "<<MIPS::A0<<" "<<val;
+        }
+        else {
+            auto reg = mips_seekReg(c.num1, true);
+            ss<<MIPS::MOVE<<" "<<MIPS::A0<<" "<<reg;
+            mips_checkRegUse(c.num1, reg, o);
+        }
+        
+    }
+    else {
+        assert(c.rst == "str");
+        ss<<MIPS::LI<<" "<<MIPS::V0<<" "<<4; mips_codes.push_back(ss.str());ss.str("");
+        ss<<MIPS::LA<<" "<<MIPS::A0<<" "<<mark2string(c.num1);
+    }
+    mips_codes.push_back(ss.str());ss.str("");
+    ss<<"syscall";mips_codes.push_back(ss.str());ss.str("");
+
 }

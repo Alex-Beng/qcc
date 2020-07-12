@@ -1,66 +1,48 @@
-const int aaaa = 100;
-char bbb;
-char bbbb[100];
-int a;
-int func(int a, int b, int c, int d) {
-    return 1;
+
+int f(int n) {
+    if(n==0) return 0;
+    if(n==1) return 1;
+    if(n>=2)
+    {
+        return f(n-1)+f(n-2);
+    }
 }
 
 void main() {
-    int a;
-    a = 1;
-    int b;
-    b = 89;
-    printf("hello world");
-    // if (b*9) {
-    //     a = 1;
-    //     // 10 = 9;
-    //     if (100) {
-    //         a = 99;
-    //     }
-        
-    //     if (a == 1) {
-    //         a = 1;
-    //     }
-    // }   
-    // else {
-    //     a = 10;
-    // }
-    // if (1) {
-    //     a = 1;
-    // }
-
-    // while (a==0) {
-    //     if (b) {
-    //         func();
-    //     }
-    // }
     int i;
-    int j;
-    char z;
-    // // for (i=0; i<10; i=i+1) {
-    // //     for (j=0; j<10; j=j+1) {
-    // //         a = 100;
-    //             i = func(1, 2, 3, a);
-    //             printf(i, "hello");
-    //             scanf(i, j, z);
-    // //     }
-    // // }
-    // break;
-    const int aa = 10;
-    printf(aa);
-    for (i=0; i<10; i=i+1) {
-        // for (j=0; j<10; j=j+1) {
-            // a = func(1, 1, 1, 1);
-            // if (a)
-                // break;
-            continue;
-        // }
-    }
+    int num[10];
+    int t;
+    i = 127;
+    t = num[i];
+    printf(t);
+    // int i;
+    // int num[10];
+    // int t;
+    // int t1;
+    // int t2;
+    // num[0] = 0;
+    // num[1] = 1;
 
-    while(a) {
-        continue;
-    }
-    
+    // i = 2;
+    // t1 = num[i-1];
+        // t2 = num[i-2];
+        // printf("t1: ", t1, "    t2: ", t2, "\n");
+        // t = t1+t2;
+        // printf(t, "\n");
+        // num[i] = t;
+
+
+    // for (i=2; i<10; i=i+1) {
+    //     t1 = num[i-1];
+    //     t2 = num[i-2];
+    //     printf("t1: ", t1, "    t2: ", t2, "\n");
+    //     t = t1+t2;
+    //     printf(t, "\n");
+    //     num[i] = t;
+    // }
+    // for (i=0; i<10; i=i+1) {
+    //     printf(num[i]);
+    //     // scanf(num[i]);
+    // }
     return ;
 }

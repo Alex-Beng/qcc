@@ -53,43 +53,39 @@ namespace MIPS {
 
 // 运行时状态
 // 用于寄存器分配
-// class MipsRuntime {
-// public:
-//     enum {t0=0, t1, t2, t3, t4, t5, t6, t7, t8, t9, s0, s1, s2, s3, s4, s5, s7};
-//     // t0 ~ t9, s0 ~ s7
-//     // 前10t 后8s
-//     bool clk_used[17];
-//     bool reg_used[17];
-//     int clk_ptr;
+class RegRuntime {
+public:
+    enum {t0=0, t1, t2, t3, t4, t5, t6, t7, t8, t9, s0, s1, s2, s3, s4, s5, s7, fp};
+    // t0 ~ t7, s0 ~ s8, fp(s8)
+    bool clk_used[17];
+    bool reg_used[17];
+    int clk_ptr;
 
-//     std::string reg_content[17];
-// 	std::map<std::string, VarInfo> sym_tab;
+    std::string reg_content[17];
+	std::map<std::string, VarInfo> sym_tab;
 
-//     void init(SymbolTable& st) {
-//         for (auto i = 0; i < 17; i++) {
-//             clk_used[i] = false;
-//             reg_used[i] = false;
-//             reg_content[i] = "";
-//         }
-//         clk_ptr = 0;
-//         sym_tab = st;
-//     }
+    void init(std::map<std::string, VarInfo>& st) {
+        for (auto i = 0; i < 17; i++) {
+            clk_used[i] = false;
+            reg_used[i] = false;
+            reg_content[i] = "";
+        }
+        clk_ptr = 0;
+        sym_tab = st;
+    }
+
+    void modifyReg(std::string& var, int& i) {
+        clk_used[i] = true;
+        reg_used[i] = true;
+        reg_content[i] = var;
+        clk_ptr = nextIdx(i);
+    }
+
+    int nextIdx(int i) {
+        return (i+1)%17;
+    }
     
-// };
-
-// class OC {
-// public:
-//     SymbolTable sym_tab;
-
-//     // 生成的mips codes
-//     std::vector<std::string> oc_codes;
-
-//     constexpr auto data_origin = 0x10010000;
-// public:
-//     // 用符号表和ir构造
-//     OC(SymbolTable&, IR&);
-//     ~OC();
-// };
+};
 
 
 
