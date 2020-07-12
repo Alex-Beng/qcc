@@ -315,6 +315,7 @@ public:
 				return ;
 			}
 		}
+		// 全都没用到
 		if (i == ir.ir_codes.end()) {
 			auto idx = reg2idx(reg);
 			run_info.reg_used[idx] = false;

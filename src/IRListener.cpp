@@ -830,7 +830,8 @@ void IRListener::enterContinueStmt(C0Parser::ContinueStmtContext * ctx) {
 void IRListener::MipsGen(std::string out_file) {
     curr_func = "";
 
-    // .data域
+    // .data域分配全局变量和str
+
     // 名字前面加_防名字冲突
     mips_codes.push_back(".data");
     // char and char array
@@ -876,7 +877,9 @@ void IRListener::MipsGen(std::string out_file) {
         head_addr += iter.first.length();
     }
 
-    // assign addr for func sym
+    // 分配函数栈中地址
+    // 1. 参数
+    // 2. local var
     for (auto& func_tab : sym_table.func_symbols) {
         int t_addr = 0;
         for (int p_cnt=0; p_cnt<sym_table.global_symbols[func_tab.first].length; p_cnt++) {
@@ -888,7 +891,10 @@ void IRListener::MipsGen(std::string out_file) {
             }
         }
         for (auto& iter : func_tab.second) {
-            if (iter.second.cls == CLS_CHAR && iter.second.type != TYPE_CONST) {
+            // 上面做了 || 作为常量
+            if (iter.second.type == TYPE_PARAM || iter.second.type == TYPE_CONST)  continue;
+
+            if (iter.second.cls == CLS_CHAR) {
                 iter.second.addr = t_addr;
                 if (iter.second.type == TYPE_VAR) {
                     t_addr += 1;
@@ -901,7 +907,10 @@ void IRListener::MipsGen(std::string out_file) {
         // 对齐
         t_addr += 4-t_addr&0x3;
         for (auto& iter : func_tab.second) {
-            if (iter.second.cls == CLS_INT && iter.second.type != TYPE_CONST) {
+            //　同上
+            if (iter.second.type == TYPE_PARAM || iter.second.type == TYPE_CONST) continue;
+
+            if (iter.second.cls == CLS_INT) {
                 iter.second.addr = t_addr;
                 if (iter.second.type == TYPE_VAR) {
                     t_addr += 4;
@@ -1014,7 +1023,7 @@ void IRListener::MipsGoto(IRCode& c) {
 }
 
 void IRListener::MipsPush(IRCode& c, std::vector<IRCode>::iterator& o) {
-    // 帧中offset
+    // 相对sp的offset，注意是绝对值而不是负值
     int offset;
     if (ParaInfoStack.empty()) {
         offset = mips_getFrameSize();
@@ -1040,7 +1049,7 @@ void IRListener::MipsPush(IRCode& c, std::vector<IRCode>::iterator& o) {
         save_reg = mips_seekReg(c.num1, true);
         mips_checkRegUse(c.num1, save_reg, o);
     }
-    // 保存现场
+    
     std::stringstream ss;
     ss<<MIPS::SW<<" "<<save_reg<<" -"<<offset<<" ("<<MIPS::SP<<")";
     mips_codes.push_back(ss.str());
@@ -1052,6 +1061,7 @@ void IRListener::MipsPush(IRCode& c, std::vector<IRCode>::iterator& o) {
 }   
 
 void IRListener::MipsCall(IRCode& c) {
+    // 保存现场
     std::string func_name = c.rst;
     auto last_push_offset = 0;
     if (ParaInfoStack.empty()) {
@@ -1060,9 +1070,13 @@ void IRListener::MipsCall(IRCode& c) {
     else {
         last_push_offset = ParaInfoStack.top().offset;
     }
+    // 保存现场
+    // 相较旧sp的offset
     auto stack_ptr = last_push_offset+4 
         - sym_table.global_symbols[func_name].length*4 
         + func_frame_size[func_name];
+    
+    // used就保存
     for (auto i=0; i<17; i++) {
         if (run_info.reg_used[i]) {
             std::stringstream ss;
@@ -1072,6 +1086,7 @@ void IRListener::MipsCall(IRCode& c) {
             stack_ptr += 4;
         }
     }
+    // push ra
     stack_ptr = last_push_offset+4 
         - sym_table.global_symbols[func_name].length*4 
         + func_frame_size[func_name]
@@ -1083,11 +1098,12 @@ void IRListener::MipsCall(IRCode& c) {
 
     stack_ptr += 4;
     
+    
     for (auto i=0; i<sym_table.global_symbols[func_name].length; i++) {
         assert(ParaInfoStack.top().func_name == func_name);
         ParaInfoStack.pop();
     }
-
+    // 计算sp offset，并更改sp
     int sp_change = 0;
     if (ParaInfoStack.empty()) {
         sp_change = mips_getFrameSize();
@@ -1108,8 +1124,8 @@ void IRListener::MipsCall(IRCode& c) {
     ss<<MIPS::ADDI<<" "<<MIPS::SP<<" "<<MIPS::SP<<" "<<sp_change;
     mips_codes.push_back(ss.str());
 
+    // 恢复ra
     stack_ptr -= 4;
-    
     ss.str("");
     ss<<MIPS::LW<<" "<<MIPS::RA<<" -"<<stack_ptr<<" ("<<MIPS::SP<<")";
     mips_codes.push_back(ss.str());
@@ -1117,7 +1133,7 @@ void IRListener::MipsCall(IRCode& c) {
     stack_ptr = last_push_offset+4 
         - sym_table.global_symbols[func_name].length*4 
         + func_frame_size[func_name];
-    
+    // 恢复reg
     for (auto i=0; i<17; i++) {
         if (run_info.reg_used[i]) {
             ss.str("");
@@ -1170,7 +1186,7 @@ void IRListener::MipsCmp(IRCode& c, std::vector<IRCode>::iterator& o) {
             ss<<(is_beq? MIPS::BEQ : MIPS::BNE)
               <<" "<<r2_reg<<" "<<v1<<" "<<mark2label(c.rst);
         }
-        else if (!r1_literal && r2_literal) {
+        else if (!r1_literal && !r2_literal) {
             r1_reg = mips_seekReg(r1, true);
             r2_reg = mips_seekReg(r2, true);
             ss<<(is_beq? MIPS::BEQ : MIPS::BNE)
@@ -1290,7 +1306,7 @@ void IRListener::MipsCalc(IRCode& c, std::vector<IRCode>::iterator& o) {
             cop == OP::ADD ? MIPS::ADD :
 			cop == OP::SUB ? MIPS::SUB :
 			cop == OP::MUL ? MIPS::MUL : MIPS::DIV;
-        ss << t_op << " " << rd_reg << " " << r1_reg << " " << r1_reg; 
+        ss << t_op << " " << rd_reg << " " << r1_reg << " " << r2_reg; 
         mips_codes.push_back(ss.str());
     }
     else if (r1_literal && !r2_literal) {
@@ -1427,8 +1443,9 @@ void IRListener::MipsSaveArr(IRCode& c, std::vector<IRCode>::iterator& o) {
         }
         else {
             idx_reg = mips_seekReg(index, true);
+            // 先乘
             if (element_size > 1) { // int
-                ss << MIPS::SLL << " " << MIPS::T8 << " " << idx_reg << " " << int(log2(element_size));
+                ss << MIPS::SLL << " " << MIPS::T8 << " " << idx_reg << " " << 2;
                 mips_codes.push_back(ss.str());
                 ss.str("");
 

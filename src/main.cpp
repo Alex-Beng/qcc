@@ -59,10 +59,14 @@ int main(int argc, char const *argv[]) {
     catch(const std::exception& e) {
         std::cerr << e.what() << '\n';
     }
+
+    ir_listener.MipsGen("./out.s");
+
     std::ofstream symIRout("./out.log");
     ir_listener.ir.printIMC(symIRout);
+    ir_listener.sym_table.printSym(symIRout);
     
-    ir_listener.MipsGen("./out.s");
+    
 
     return 0;
 }

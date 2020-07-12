@@ -6,6 +6,7 @@
 #include "IR.h"
 
 namespace MIPS {
+    // MARS
     constexpr int data_origin = 0x10010000;
 
     constexpr auto SW = "sw";

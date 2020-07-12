@@ -28,12 +28,13 @@ public:
 		str_sym_counter = 0;
 	}
     VarInfo* lookup(const std::string &curr_func, const std::string &name, bool local);
-	bool is_global_iden(const std::string &curr_func, std::string &s);
 	std::map<std::string, VarInfo> lookup_func(const std::string &func_name);
 	VarInfo* lookup_para(std::map<std::string, VarInfo> &func_symtab, int place);
 
 	void addSym(std::string curFunc, std::string namae, int _class, int type, int length, int line);
 	int addStr(std::string &s);
+
+	void printSym(std::ofstream&o);
 };
 
 

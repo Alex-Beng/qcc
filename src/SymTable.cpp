@@ -1,5 +1,11 @@
 #include "SymTable.h"
 
+#define SYM_CLS(x)	((x.cls == CLS_INT ? "int" : x.cls == CLS_CHAR ? "char" : "void"))
+#define SYM_TYP(x)	((x.type == TYPE_CONST ? "const" : \
+						x.type == TYPE_VAR ? "var" : \
+						x.type == TYPE_ARRAY ? "array" : \
+						x.type == TYPE_FUNC ? "func" : "para"))
+
 
 VarInfo* SymbolTable::lookup(const std::string &curr_func, const std::string &name, bool only_local) {
     // local first
@@ -23,19 +29,6 @@ VarInfo* SymbolTable::lookup(const std::string &curr_func, const std::string &na
     }
     else {
         return nullptr;
-    }
-}
-
-bool SymbolTable::is_global_iden(const std::string& cuff_func, std::string& s) {
-    if (s[0] == '#') {
-        return false;
-    }
-    VarInfo* t = lookup(cuff_func, s, true);
-    if (t == nullptr) {
-        return true;
-    }
-    else {
-        return false;
     }
 }
 
@@ -83,3 +76,62 @@ int SymbolTable::addStr(std::string &s) {
 	}
 	return str_symbols[s];
 }
+
+void SymbolTable::printSym(std::ofstream&o) {
+	for (auto iter = str_symbols.begin(); iter != str_symbols.end(); iter++) {
+		o << "string_" << std::to_string(iter->second)
+			<< " : .asciiz " << iter->first << '"' << std::endl;
+	}
+	o << std::right;
+	o << "global:" << std::endl;
+	o << std::setw(14) << "name" << '|' <<
+		std::setw(5) << "class" << '|' <<
+		std::setw(6) << "type" << '|' <<
+		std::setw(5) << "len" << '|' <<
+		std::setw(5) << "def" << '|' <<
+		std::setw(11) << "addr" << std::endl;
+	for (auto iter = global_symbols.begin(); iter != global_symbols.end(); iter++) {
+		o << std::dec << std::setw(14) << iter->first << '|' <<
+			std::setw(5) << SYM_CLS(iter->second) << '|' <<
+			std::setw(6) << SYM_TYP(iter->second) << '|' <<
+			std::dec << std::setw(5) << iter->second.length << '|' <<
+			std::dec << std::setw(5) << iter->second.def_line << '|'
+			 << std::setw(11) << std::hex << iter->second.addr << '|'  << std::endl;
+	}
+	o << std::endl;
+	for (auto iter = func_symbols.begin(); iter != func_symbols.end(); iter++) {
+		if (iter->first != "main")
+		{
+			o << iter->first << ':' << std::endl;
+			o << std::dec << std::setw(14) << "name" << '|' <<
+				std::setw(5) << "class" << '|' <<
+				std::setw(6) << "type" << '|' <<
+				std::setw(5) << "len" << '|' <<
+				std::setw(5) << "def" << '|' <<
+				std::setw(11) << "addr" << std::endl;
+			for (auto it2 = iter->second.begin(); it2 != iter->second.end(); it2++)
+				o << std::setw(14) << it2->first << '|' <<
+				std::setw(5) << SYM_CLS(it2->second) << '|' <<
+				std::setw(6) << SYM_TYP(it2->second) << '|' <<
+				std::dec << std::setw(5) << it2->second.length << '|' <<
+				std::dec << std::setw(5) << it2->second.def_line << '|'
+				  << std::setw(11) << std::hex << it2->second.addr << '|'  << std::endl;
+
+		}
+	}
+	o << std::endl << "main:" << std::endl;
+	o << std::dec << std::setw(14) << "name" << '|' <<
+		std::setw(5) << "class" << '|' <<
+		std::setw(6) << "type" << '|' <<
+		std::setw(5) << "len" << '|' <<
+		std::setw(5) << "def" << '|' <<
+		std::setw(11) << "addr" << std::endl;
+	for (auto it2 = func_symbols["main"].begin(); it2 != func_symbols["main"].end(); it2++)
+		o << std::setw(14) << it2->first << '|' <<
+		std::setw(5) << SYM_CLS(it2->second) << '|' <<
+		std::setw(6) << SYM_TYP(it2->second) << '|' <<
+		std::dec << std::setw(5) << it2->second.length << '|' <<
+		std::dec << std::setw(5) << it2->second.def_line << '|'
+		  << std::setw(11) << std::hex << it2->second.addr << '|' << std::endl;
+}
+
