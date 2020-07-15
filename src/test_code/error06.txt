@@ -1,9 +1,0 @@
-const int a = 'a';
-const char aa = 'd';
-const char c = 'b';
-int aaa[1];
-// void ab;
-
-// char a;
-int cccc;
-// int cccc;

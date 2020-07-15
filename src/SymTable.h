@@ -19,19 +19,28 @@ struct VarInfo {
 //　符号表 
 class SymbolTable {
 public:
+	// 全局符号表
     std::map<std::string, VarInfo> global_symbols;
+	// 函数符号表
+	// 函数参数，局部变量，
 	std::map<std::string, std::map<std::string, VarInfo>> func_symbols;
+	// 字符串符号表
 	std::map<std::string, int> str_symbols;
+	// 用于字符串编号
 	int str_sym_counter;
 public: 
 	SymbolTable() {
 		str_sym_counter = 0;
 	}
+	// 查找符号表
     VarInfo* lookup(const std::string &curr_func, const std::string &name, bool local);
+	// 超照函数符号表
 	std::map<std::string, VarInfo> lookup_func(const std::string &func_name);
-	VarInfo* lookup_para(std::map<std::string, VarInfo> &func_symtab, int place);
-
+	// 查找函数参数
+	VarInfo* lookup_para(std::map<std::string, VarInfo> &func_symtab, int para_idx);
+	// 添加符号
 	void addSym(std::string curFunc, std::string namae, int _class, int type, int length, int line);
+	// 添加字符串
 	int addStr(std::string &s);
 
 	void printSym(std::ofstream&o);

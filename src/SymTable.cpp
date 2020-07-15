@@ -14,7 +14,7 @@ VarInfo* SymbolTable::lookup(const std::string &curr_func, const std::string &na
         if (this->func_symbols[curr_func].count(name) > 0) {
             return &this->func_symbols[curr_func][name];
         }
-        if (only_local) {// 
+        if (only_local) {
             if (curr_func == name) {
                 return &global_symbols[name];
             }
@@ -37,9 +37,9 @@ std::map<std::string, VarInfo> SymbolTable::lookup_func(const std::string &func_
 	return this->func_symbols[func_name];
 }
 
-VarInfo* SymbolTable::lookup_para(std::map<std::string, VarInfo> &t_func_sym, int place) {
+VarInfo* SymbolTable::lookup_para(std::map<std::string, VarInfo> &t_func_sym, int para_idx) {
     for (auto iter=t_func_sym.begin(); iter!=t_func_sym.end(); iter++) {
-        if (iter->second.length==place && iter->second.type==TYPE_PARAM) {
+        if (iter->second.length==para_idx && iter->second.type==TYPE_PARAM) {
             return &(iter->second);
         }
     }

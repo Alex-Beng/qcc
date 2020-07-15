@@ -3,14 +3,12 @@ int b;
 char c;
 char d;
 char ii[90];
-int f(int n, int n2) {
-    printf(n, " ", n2, "\n");
+int f(int n) {
     if(n==0) return 0;
     if(n==1) return 1;
     if(n>=2)
     {
-        // return f(n-1)+f(n-2);
-        return 1;
+        return f(n-1)+f(n-2);
     }
 }
 
@@ -41,12 +39,17 @@ void main() {
 
 
     for (i=2; i<10; i=i+1) {
-        t1 = num[i-1];
-        t2 = num[i-2];
-        printf("t1: ", t1, "    t2: ", t2, "\n");
-        t = t1+t2;
-        printf(t, "\n");
-        num[i] = t;
+        num[i] = f(i);
+        // t1 = num[i-1];
+        // t2 = num[i-2];
+        // printf("t1: ", t1, "    t2: ", t2, "\n");
+        // t = t1+t2;
+        printf(num[i], "\n");
+        if (num[i] > 10) {
+            break;
+        }
+        
+        // num[i] = t;
     }
     // for (i=0; i<10; i=i+1) {
     //     printf(num[i]);

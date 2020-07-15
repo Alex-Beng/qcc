@@ -120,30 +120,31 @@ void IRListener::enterDefConst(C0Parser::DefConstContext * ctx) {
 }
 
 void IRListener::enterDefVar(C0Parser::DefVarContext * ctx) {
-    std::string var_name = ctx->Identifier()->getText();
-    std::string type_str = ctx->typeType()->getText();
-    int var_cls;
-    int var_type = TYPE_VAR;
+    for (int i=0; i<ctx->Identifier().size(); i++) {
+        std::string var_name = ctx->Identifier()[i]->getText();
+        std::string type_str = ctx->typeType()->getText();
+        int var_cls;
+        int var_type = TYPE_VAR;
 
-    if (type_str == "int") {
-        var_cls = CLS_INT;
-    }
-    else if (type_str == "char") {
-        var_cls = CLS_CHAR;
-    }
-    else if (type_str == "void") {
-        throw std::runtime_error("unexpect void type at line: "+std::to_string(ctx->getStart()->getLine()));
-    }
-    else { // "const xxx"
-        throw std::runtime_error("const must have RHS expression at line: "+std::to_string(ctx->getStart()->getLine()));
-    }
+        if (type_str == "int") {
+            var_cls = CLS_INT;
+        }
+        else if (type_str == "char") {
+            var_cls = CLS_CHAR;
+        }
+        else if (type_str == "void") {
+            throw std::runtime_error("unexpect void type at line: "+std::to_string(ctx->getStart()->getLine()));
+        }
+        else { // "const xxx"
+            throw std::runtime_error("const must have RHS expression at line: "+std::to_string(ctx->getStart()->getLine()));
+        }
 
-    if (sym_table.lookup(curr_func, var_name, true) == nullptr)
-        sym_table.addSym(curr_func, var_name, var_cls, var_type, 0, ctx->getStart()->getLine());
-    else {
-        throw std::runtime_error("multi defination of "+ctx->Identifier()->getText()+" at line: "+std::to_string(ctx->getStart()->getLine()));
+        if (sym_table.lookup(curr_func, var_name, true) == nullptr)
+            sym_table.addSym(curr_func, var_name, var_cls, var_type, 0, ctx->getStart()->getLine());
+        else {
+            throw std::runtime_error("multi defination of "+ctx->Identifier()[i]->getText()+" at line: "+std::to_string(ctx->getStart()->getLine()));
+        }
     }
-
 }
 
 void IRListener::enterDefArray(C0Parser::DefArrayContext * ctx) {
@@ -627,11 +628,10 @@ void IRListener::enterFuncallExpr(C0Parser::FuncallExprContext * ctx) {
 }
 void IRListener::exitFuncallExpr(C0Parser::FuncallExprContext * ctx) {
     auto func_name = ctx->expression()->getText();
-
     auto func_info = sym_table.lookup(curr_func, func_name, false);
-
     auto func_symtab = sym_table.lookup_func(func_name);
 
+    
     int cnt = 0;
     for (auto& param : ctx->expressionList()->expression()) {
         ir.addIMC(func_name, OP::PUSH_PARA, temp_var.get(param), std::to_string(cnt));
@@ -644,6 +644,7 @@ void IRListener::exitFuncallExpr(C0Parser::FuncallExprContext * ctx) {
     }
 
     ir.addIMC(func_name, OP::CALL, "0", "0");
+    
     if (func_info->cls == CLS_VOID) {
         ;
     }
@@ -878,8 +879,6 @@ void IRListener::MipsGen(std::string out_file) {
     }
 
     // 分配函数栈中地址
-    // 1. 参数
-    // 2. local var
     for (auto& func_tab : sym_table.func_symbols) {
         int t_addr = 0;
         for (int p_cnt=0; p_cnt<sym_table.global_symbols[func_tab.first].length; p_cnt++) {
@@ -1047,7 +1046,6 @@ void IRListener::MipsPush(IRCode& c, std::vector<IRCode>::iterator& o) {
     else {
         // 在寄存器中找一个先放着
         save_reg = mips_seekReg(c.num1, true);
-        mips_checkRegUse(c.num1, save_reg, o);
     }
     
     std::stringstream ss;
@@ -1058,6 +1056,9 @@ void IRListener::MipsPush(IRCode& c, std::vector<IRCode>::iterator& o) {
     t.func_name = c.rst;
     t.offset = offset;
     ParaInfoStack.push(t);
+
+    // 用完要还
+    mips_checkRegUse(c.num1, save_reg, o);
 }   
 
 void IRListener::MipsCall(IRCode& c) {
@@ -1172,7 +1173,7 @@ void IRListener::MipsCmp(IRCode& c, std::vector<IRCode>::iterator& o) {
             if ((is_beq&&eq) || (!is_beq&&!eq)) {// 可直接跳转
                 ss<<MIPS::J<<" "<<mark2label(c.rst);
             }
-            else {// 不跳就跳过，谐音梗扣分
+            else {// 不跳就跳过，
                 ;
             }
         }

@@ -28,21 +28,21 @@ namespace OP {
 	constexpr auto LES = "<";
 	constexpr auto LESEQ = "<=";
 
-	constexpr auto SAVE_ARR = "[]=";	// sw sb --> arr []= 3 t
-	constexpr auto READ_ARR = "=[]";	// lw lb --> t =[] arr 5
+	constexpr auto SAVE_ARR = "[]=";	
+	constexpr auto READ_ARR = "=[]";	
 	
-	constexpr auto SCAN = "scanf";		//la li syscall
+	constexpr auto SCAN = "scanf";		
 	constexpr auto PRINT = "print";		
 
-	constexpr auto PUSH_PARA = "push";	// push para into stack --> value_param1 push 0 0
-	constexpr auto CALL = "call";		// push reg into stack
-	constexpr auto RET = "ret";			// save ret_val to $v0, sp+, fp+
-	constexpr auto FUNC_END = "func_end";	//
+	constexpr auto PUSH_PARA = "push";	
+	constexpr auto CALL = "call";		
+	constexpr auto RET = "ret";			
+	constexpr auto FUNC_END = "func_end";	
 	
-	constexpr auto GOTO = "goto";	// j
-	constexpr auto FUNC_BEGIN = "func_begin";	// func label
-	constexpr auto LABEL = "label";	//if for while label
-	constexpr auto EXIT = "exit";	// met return in main
+	constexpr auto GOTO = "goto";	
+	constexpr auto FUNC_BEGIN = "func_begin";	
+	constexpr auto LABEL = "label";	
+	constexpr auto EXIT = "exit";	
 
     /* temporary var head, #1, #2, ... */
 	constexpr auto TEMP_VAR_HEAD = "#";
@@ -68,7 +68,7 @@ public:
         str_cnt = 0;
     }
 
-    std::string gen_temp(std::string &curFunc, int lc, int cls, SymbolTable& st);
+    std::string gen_temp(std::string &curr_func, int lc, int cls, SymbolTable& st);
 	std::string gen_label();
 
 	void addIMC(std::string rst, const std::string &op, std::string op1, std::string op2);

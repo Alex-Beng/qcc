@@ -153,7 +153,7 @@ public:
 	std::string mips_appointReg(std::string &var) {
 		// 1. 找从未用过的reg
 		// 2. 未使用的reg
-		// 3. 最长时间不用的reg
+		// 3. clk算法获得reg
 
 		// 1.
 		auto stop_pos = run_info.clk_ptr;
@@ -254,6 +254,7 @@ public:
 		return true;
 	}
 
+	// 寻找寄存器
 	std::string mips_seekReg(std::string value, bool fetch_to_reg) {
 		auto t_reg = mark2reg(value);
 		if (t_reg != "0") {

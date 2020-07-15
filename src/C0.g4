@@ -10,7 +10,7 @@ functionDefinition
    ;
 
 variableDefinition
-    : typeType Identifier ';'                                           #defVar
+    : typeType Identifier (',' Identifier)* ';'                         #defVar
     | typeType Identifier ('=' rhs=(CharLiteral|DecimalInteger))? ';'   #defConst
     | typeType Identifier '[' DecimalInteger ']' ';'                    #defArray
     ;
@@ -79,7 +79,6 @@ expression
     | 'scanf' '(' expressionList? ')'                    # scanfExpr
     | expression '(' expressionList? ')'                 # funcallExpr
     | op=('+' | '-') expression                          # prefixExpr
-    | op=('~' | '!' ) expression                         # prefixExpr
     | expression op=('*' | '/') expression               # binaryExpr
     | expression op=('+' | '-') expression               # binaryExpr
     | expression op=('<' | '>' | '>=' | '<=') expression # binaryExpr

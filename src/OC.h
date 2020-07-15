@@ -6,7 +6,24 @@
 #include "IR.h"
 
 namespace MIPS {
-    // MARS
+
+    // 储存空间分配
+    // pre sp -> ------
+    //          param
+    //          local var
+    //          regs 
+    //          ra
+    // new sp -> ------
+
+
+    // 寄存器用途
+    // zero : none
+    // v0   : 函数返回值
+    // a0   : 系统调用
+    // t0-t7, s0-s8(fp): 需要进行分配的reg
+    // t8,t9: 运算用, 无需分配．
+
+    // .data域
     constexpr int data_origin = 0x10010000;
 
     constexpr auto SW = "sw";
@@ -62,7 +79,9 @@ public:
     bool reg_used[17];
     int clk_ptr;
 
+    // 存着哪个变量
     std::string reg_content[17];
+    // 当前函数的符号表
 	std::map<std::string, VarInfo> sym_tab;
 
     void init(std::map<std::string, VarInfo>& st) {
