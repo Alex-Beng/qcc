@@ -4,8 +4,6 @@ int c[23];
 char d[23];
 const int e = 1;
 const char f = 'f';
-
-
 int test_recusion(int a) {
     if (a == 0) 
         return 0;
@@ -14,14 +12,12 @@ int test_recusion(int a) {
     else if (a >= 2) 
         return test_recusion(a-1)+test_recusion(a-2);
 }
-
 void fuck(int n) {
     while(n>0) {
         printf(n);
         n = n-1;
     }
 }
-
 void main() {
     fuck(10);
     printf("hello world!\n");
@@ -38,7 +34,6 @@ void main() {
     if (a>100) {
         a = 100;
     }
-
     int num[20];
     int i;
     for (i=0; i<20; i=i+1) {
@@ -50,14 +45,9 @@ void main() {
         else {
             continue;
         }
-    }
-
-    
-
+    }   
     int t;
     t = test_recusion(10);
     printf(t, "\n");
-
-
     return ;
 }
